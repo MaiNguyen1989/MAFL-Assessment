@@ -4,8 +4,8 @@
 
 ## 1. Tổng Quan Tiến Độ
 
-* **Trạng thái hiện tại:** Hoàn thành thiết lập mã nguồn Next.js & React và dựng xong Front-end Client. Chuẩn bị triển khai Database & Backend (Phase 2).
-* **Thanh tiến độ:** `█████░░░░░ 50%`
+* **Trạng thái hiện tại:** Hoàn thành thiết lập Database Schema & bảo mật Supabase RLS. Chuẩn bị tích hợp logic kết nối cơ sở dữ liệu thật cho Front-end.
+* **Thanh tiến độ:** `██████░░░░ 60%`
 
 ### Danh sách các hạng mục chi tiết
 
@@ -15,7 +15,7 @@
 | **Thiết kế kiến trúc hệ thống (System Design)** | ✅ Đã hoàn thành | **P0** | Đã chốt mô hình và thiết kế cấu trúc database, API. |
 | **Thiết kế giao diện UI/UX & Wireframe** | ✅ Đã hoàn thành | **P0** | Đã phác thảo giao diện trên các trang HTML mẫu. |
 | **Phát triển Front-end Prototype (Mock data)** | ✅ Đã hoàn thành | **P0** | Đã xây dựng coachee.html & coach.html chạy hoàn chỉnh bằng mock data. |
-| **Thiết lập Database & Bảo mật Supabase RLS** | ❌ Chưa hoàn thành | **P1** | Tạo các bảng cơ sở dữ liệu và phân quyền truy cập. |
+| **Thiết lập Database & Bảo mật Supabase RLS** | ✅ Đã hoàn thành | **P1** | Đã tạo SQL migration khởi tạo các bảng và phân quyền RLS bảo mật. |
 | **Tích hợp logic backend & thuật toán tính điểm** | ❌ Chưa hoàn thành | **P1** | Xây dựng logic phân bổ điểm trắc nghiệm vào 4 trục L-P-I-S. |
 | **Tự động hóa kết xuất báo cáo PDF & gửi Email** | ❌ Chưa hoàn thành | **P1** | Tích hợp hệ thống sinh PDF và gửi email tự động qua Resend. |
 | **Kiểm thử chất lượng & Tối ưu Responsive** | ❌ Chưa hoàn thành | **P2** | Đảm bảo hiển thị hoàn hảo trên Mobile và tốc độ tải trang < 3s. |
@@ -101,5 +101,5 @@ Cấu trúc thư mục ưu tiên phân bổ rõ ràng phần Front-end và các 
 - [x] 3. Phát triển giao diện làm bài của Coachee (tính toán vẽ biểu đồ mạng nhện tự động, loại bỏ hiển thị điểm).
 - [x] 4. Phát triển giao diện Coach Portal (đăng nhập bảo mật, xem radar chart, chấm sao theo 3 tiêu chí).
 - [x] 5. Khởi tạo mã nguồn dự án Next.js 14+ (App Router, TypeScript) và tích hợp các trang HTML prototype này thành các component React.
-- [ ] 6. Cấu hình dự án Supabase, triển khai migration Database (bảng users, assessments, reviews) và phân quyền RLS để chuẩn bị tích hợp dữ liệu thật.
+- [x] 6. Cấu hình dự án Supabase, triển khai migration Database (bảng users, assessments, reviews) và phân quyền RLS để chuẩn bị tích hợp dữ liệu thật.
 - [/] 7. Thiết lập cấu hình Git repository (Đã đẩy code lên GitHub) và triển khai CI/CD tự động deploy lên Vercel.

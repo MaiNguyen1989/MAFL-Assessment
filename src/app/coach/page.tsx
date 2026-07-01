@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -100,8 +101,46 @@ export default function CoachPage() {
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Initializing mock database if not exists
-  useEffect(() => {
+  const fetchSubmissions = async () => {
+    if (isSupabaseConfigured) {
+      try {
+        const { data: assessmentsData, error: assessmentsError } = await supabase
+          .from("assessments")
+          .select("*, coach_reviews(*)")
+          .order("submitted_at", { ascending: false });
+
+        if (assessmentsError) throw assessmentsError;
+
+        if (assessmentsData && assessmentsData.length > 0) {
+          const formatted: CoacheeSubmission[] = assessmentsData.map((item: any) => ({
+            id: item.id,
+            name: item.coachee_name,
+            email: item.coachee_email,
+            stage: item.stage,
+            submittedAt: new Date(item.submitted_at).toLocaleString("vi-VN"),
+            status: item.status,
+            scores: item.scores,
+            answers: item.answers,
+            review: item.coach_reviews && item.coach_reviews.length > 0 
+              ? {
+                  q13: item.coach_reviews[0].q13_stars,
+                  q14: item.coach_reviews[0].q14_stars,
+                  q15: item.coach_reviews[0].q15_stars,
+                  feedback: item.coach_reviews[0].feedback,
+                }
+              : null
+          }));
+          setSubmissions(formatted);
+          return;
+        }
+      } catch (err) {
+        console.error("Supabase fetch failed, loading from localStorage:", err);
+      }
+    } else {
+      console.log("Supabase is not configured, loading from localStorage.");
+    }
+    
+    // Fallback to localStorage
     if (typeof window !== "undefined") {
       const existing = localStorage.getItem("lda_assessments");
       if (!existing) {
@@ -111,6 +150,10 @@ export default function CoachPage() {
         setSubmissions(JSON.parse(existing));
       }
     }
+  };
+
+  useEffect(() => {
+    fetchSubmissions();
   }, []);
 
   const handleLogin = (e: React.FormEvent) => {
@@ -164,7 +207,7 @@ export default function CoachPage() {
 
   const activeCoachee = submissions.find((c) => c.id === activeId);
 
-  const handleSubmitReview = (e: React.FormEvent) => {
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (ratings.q13 === 0 || ratings.q14 === 0 || ratings.q15 === 0) {
       alert("Vui lòng chấm sao đánh giá đầy đủ cho cả 3 tiêu chí!");
@@ -173,6 +216,40 @@ export default function CoachPage() {
     if (!feedback.trim()) {
       alert("Vui lòng nhập nhận xét/khuyên nhủ chung!");
       return;
+    }
+
+    if (isSupabaseConfigured) {
+      try {
+        // 1. Insert review into coach_reviews
+        const { error: reviewError } = await supabase
+          .from("coach_reviews")
+          .insert({
+            assessment_id: activeId,
+            q13_stars: ratings.q13,
+            q14_stars: ratings.q14,
+            q15_stars: ratings.q15,
+            feedback: feedback.trim()
+          });
+
+        if (reviewError) throw reviewError;
+
+        // 2. Update status in assessments
+        const { error: assessmentError } = await supabase
+          .from("assessments")
+          .update({ status: "Đã hoàn thành" })
+          .eq("id", activeId);
+
+        if (assessmentError) throw assessmentError;
+
+        // Reload
+        await fetchSubmissions();
+        setShowSuccessModal(true);
+        return;
+      } catch (err) {
+        console.error("Supabase review submission failed, falling back to localStorage:", err);
+      }
+    } else {
+      console.log("Supabase is not configured, falling back to localStorage.");
     }
 
     const updated = submissions.map((c) => {

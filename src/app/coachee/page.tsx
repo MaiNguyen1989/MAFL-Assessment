@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -284,22 +285,19 @@ export default function CoacheePage() {
     return calculated;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!validateCurrentStep()) {
       alert("Vui lòng điền đầy đủ tất cả thông tin yêu cầu trước khi tiếp tục.");
       return;
     }
 
     if (currentStep === totalSteps - 1) {
-      // Submitting the form: Save to Mock DB (localStorage)
       const calculatedScores = calculateRadarScores();
       
-      const newSubmission = {
-        id: "sub_" + Date.now(),
-        name: fullName,
-        email: email,
+      const assessmentData = {
+        coachee_name: fullName,
+        coachee_email: email,
         stage: stage,
-        submittedAt: new Date().toLocaleString("vi-VN"),
         status: "Chờ nhận xét",
         scores: {
           L: Number(calculatedScores[0].toFixed(1)),
@@ -315,15 +313,58 @@ export default function CoacheePage() {
           q14_reason: q14Reason,
           q15_commitment: q15Commitment,
           q15_reason: q15Reason,
-        },
-        review: null,
+        }
       };
 
-      const existingSubmissions = JSON.parse(
-        localStorage.getItem("lda_assessments") || "[]"
-      );
-      existingSubmissions.push(newSubmission);
-      localStorage.setItem("lda_assessments", JSON.stringify(existingSubmissions));
+      if (isSupabaseConfigured) {
+        try {
+          const { error } = await supabase
+            .from("assessments")
+            .insert(assessmentData);
+
+          if (error) throw error;
+          console.log("Saved to Supabase successfully.");
+        } catch (err) {
+          console.error("Supabase insert failed, falling back to localStorage:", err);
+          
+          const newSubmission = {
+            id: "sub_" + Date.now(),
+            name: fullName,
+            email: email,
+            stage: stage,
+            submittedAt: new Date().toLocaleString("vi-VN"),
+            status: "Chờ nhận xét",
+            scores: assessmentData.scores,
+            answers: assessmentData.answers,
+            review: null,
+          };
+
+          const existingSubmissions = JSON.parse(
+            localStorage.getItem("lda_assessments") || "[]"
+          );
+          existingSubmissions.push(newSubmission);
+          localStorage.setItem("lda_assessments", JSON.stringify(existingSubmissions));
+        }
+      } else {
+        console.log("Supabase is not configured, falling back to localStorage.");
+        const newSubmission = {
+          id: "sub_" + Date.now(),
+          name: fullName,
+          email: email,
+          stage: stage,
+          submittedAt: new Date().toLocaleString("vi-VN"),
+          status: "Chờ nhận xét",
+          scores: assessmentData.scores,
+          answers: assessmentData.answers,
+          review: null,
+        };
+
+        const existingSubmissions = JSON.parse(
+          localStorage.getItem("lda_assessments") || "[]"
+        );
+        existingSubmissions.push(newSubmission);
+        localStorage.setItem("lda_assessments", JSON.stringify(existingSubmissions));
+      }
 
       setCurrentStep(5);
     } else {
