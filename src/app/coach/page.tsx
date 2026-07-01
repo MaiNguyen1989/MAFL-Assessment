@@ -393,7 +393,7 @@ export default function CoachPage() {
             <div className="flex items-center justify-center w-12 h-12 text-2xl font-bold rounded-lg bg-primary text-on-primary shadow-lg shadow-primary/20">
               L
             </div>
-            <span className="text-2xl font-bold text-primary tracking-tight">Lumina</span>
+            <span className="text-2xl font-bold text-primary tracking-tight">Leadership development assessment</span>
           </div>
           
           <div className="text-center">
