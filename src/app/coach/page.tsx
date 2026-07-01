@@ -241,6 +241,17 @@ export default function CoachPage() {
 
         if (assessmentError) throw assessmentError;
 
+        // Trigger PDF and email send via serverless API
+        try {
+          await fetch("/api/send-report", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ assessmentId: activeId }),
+          });
+        } catch (e) {
+          console.error("Failed to trigger send-report API:", e);
+        }
+
         // Reload
         await fetchSubmissions();
         setShowSuccessModal(true);
@@ -270,6 +281,18 @@ export default function CoachPage() {
 
     setSubmissions(updated);
     localStorage.setItem("lda_assessments", JSON.stringify(updated));
+
+    // Trigger PDF and email send via serverless API (for local mock testing)
+    try {
+      await fetch("/api/send-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assessmentId: activeId }),
+      });
+    } catch (e) {
+      console.error("Failed to trigger send-report API:", e);
+    }
+
     setShowSuccessModal(true);
   };
 
