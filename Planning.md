@@ -4,8 +4,8 @@
 
 ## 1. Tổng Quan Tiến Độ
 
-* **Trạng thái hiện tại:** Hoàn thành kết nối Supabase API & thuật toán quy đổi điểm L-P-I-S. Chuẩn bị triển khai PDF & Tự động gửi Email (Phase 3).
-* **Thanh tiến độ:** `███████░░░ 70%`
+* **Trạng thái hiện tại:** Hoàn thành kết xuất báo cáo PDF (jsPDF) & tự động gửi mail (Resend API). Sắp sửa chạy thử nghiệm kiểm thử Mobile Responsive & go-live.
+* **Thanh tiến độ:** `█████████░ 90%`
 
 ### Danh sách các hạng mục chi tiết
 
@@ -17,7 +17,7 @@
 | **Phát triển Front-end Prototype (Mock data)** | ✅ Đã hoàn thành | **P0** | Đã xây dựng coachee.html & coach.html chạy hoàn chỉnh bằng mock data. |
 | **Thiết lập Database & Bảo mật Supabase RLS** | ✅ Đã hoàn thành | **P1** | Đã tạo SQL migration khởi tạo các bảng và phân quyền RLS bảo mật. |
 | **Tích hợp logic backend & thuật toán tính điểm** | ✅ Đã hoàn thành | **P1** | Đã tích hợp logic tính điểm trung bình và kết nối lưu trữ/truy vấn qua Supabase SDK. |
-| **Tự động hóa kết xuất báo cáo PDF & gửi Email** | ❌ Chưa hoàn thành | **P1** | Tích hợp hệ thống sinh PDF và gửi email tự động qua Resend. |
+| **Tự động hóa kết xuất báo cáo PDF & gửi Email** | ✅ Đã hoàn thành | **P1** | Đã tạo serverless API tự động xuất báo cáo PDF (jsPDF) & tích hợp Resend API. |
 | **Kiểm thử chất lượng & Tối ưu Responsive** | ❌ Chưa hoàn thành | **P2** | Đảm bảo hiển thị hoàn hảo trên Mobile và tốc độ tải trang < 3s. |
 
 ---
@@ -103,4 +103,5 @@ Cấu trúc thư mục ưu tiên phân bổ rõ ràng phần Front-end và các 
 - [x] 5. Khởi tạo mã nguồn dự án Next.js 14+ (App Router, TypeScript) và tích hợp các trang HTML prototype này thành các component React.
 - [x] 6. Cấu hình dự án Supabase, triển khai migration Database (bảng users, assessments, reviews) và phân quyền RLS để chuẩn bị tích hợp dữ liệu thật.
 - [/] 7. Thiết lập cấu hình Git repository (Đã đẩy code lên GitHub) và triển khai CI/CD tự động deploy lên Vercel.
-- [ ] 8. Triển khai API Serverless/Edge Function để kết xuất báo cáo PDF và gửi Email tự động qua Resend API (Phase 3).
+- [x] 8. Triển khai API Serverless/Edge Function để kết xuất báo cáo PDF và gửi Email tự động qua Resend API (Phase 3).
+- [ ] 9. Kiểm thử chất lượng hiển thị Responsive trên di động và hoàn tất triển khai Go-live lên Vercel production.

@@ -100,6 +100,34 @@ export default function CoachPage() {
   const [feedback, setFeedback] = useState("");
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadPDF = async (id: string, name: string) => {
+    setIsDownloading(true);
+    try {
+      const res = await fetch("/api/send-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assessmentId: id, download: true }),
+      });
+      const data = await res.json();
+      if (data.pdf) {
+        const link = document.createElement("a");
+        link.href = data.pdf;
+        link.download = `Bao_cao_MAFL_${name.replace(/\s+/g, "_")}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        alert("Không thể tạo file PDF báo cáo.");
+      }
+    } catch (e) {
+      console.error("Download failed:", e);
+      alert("Lỗi khi tải file PDF.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const fetchSubmissions = async () => {
     if (isSupabaseConfigured) {
@@ -712,7 +740,16 @@ export default function CoachPage() {
                       >
                         Hủy bỏ
                       </button>
-                      {activeCoachee?.status !== "Đã hoàn thành" && (
+                      {activeCoachee?.status === "Đã hoàn thành" ? (
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadPDF(activeCoachee.id, activeCoachee.name)}
+                          className="px-5 py-2.5 bg-success text-on-primary font-semibold rounded-lg text-sm hover:bg-success/90 shadow-md shadow-success/15 transition-all disabled:opacity-50"
+                          disabled={isDownloading}
+                        >
+                          {isDownloading ? "Đang tải..." : "📥 Tải báo cáo PDF"}
+                        </button>
+                      ) : (
                         <button
                           type="submit"
                           className="px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-lg text-sm hover:bg-primary-hover shadow-md shadow-primary/15 transition-all"
@@ -742,12 +779,25 @@ export default function CoachPage() {
             <p className="text-sm text-on-surface-variant leading-relaxed mb-6">
               Báo cáo đánh giá (file PDF có biểu đồ mạng nhện kèm nhận xét chi tiết của Coach) đã được tạo tự động và gửi thành công tới email của cả Coachee và Coach.
             </p>
-            <button
-              onClick={closeSuccessModal}
-              className="w-full py-2.5 bg-primary text-on-primary font-semibold rounded-lg text-sm hover:bg-primary-hover transition-all"
-            >
-              Đóng
-            </button>
+            <div className="w-full flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  if (activeId && activeCoachee) {
+                    handleDownloadPDF(activeId, activeCoachee.name);
+                  }
+                }}
+                className="w-full py-2.5 bg-success text-on-primary font-semibold rounded-lg text-sm hover:bg-success/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                disabled={isDownloading}
+              >
+                {isDownloading ? "Đang tải..." : "📥 Tải báo cáo PDF ngay"}
+              </button>
+              <button
+                onClick={closeSuccessModal}
+                className="w-full py-2.5 border border-outline bg-surface text-secondary hover:bg-surface-container-low font-semibold rounded-lg text-sm transition-all"
+              >
+                Quay lại Dashboard
+              </button>
+            </div>
           </div>
         </div>
       )}

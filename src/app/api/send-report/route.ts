@@ -5,6 +5,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 
 interface RequestBody {
   assessmentId: string;
+  download?: boolean;
 }
 
 function cleanText(str: string): string {
@@ -19,7 +20,7 @@ function cleanText(str: string): string {
 export async function POST(request: Request) {
   try {
     const body: RequestBody = await request.json();
-    const { assessmentId } = body;
+    const { assessmentId, download } = body;
 
     if (!assessmentId) {
       return NextResponse.json({ error: "Missing assessmentId" }, { status: 400 });
@@ -185,6 +186,11 @@ export async function POST(request: Request) {
     doc.text("Nhan xet chung cua Coach:", 20, 226);
     const splitFeedback = doc.splitTextToSize(cleanText(feedback), 170);
     doc.text(splitFeedback, 20, 233);
+
+    // If request is only for downloading the PDF, return it immediately
+    if (download) {
+      return NextResponse.json({ success: true, pdf: doc.output("datauristring") });
+    }
 
     // 2. Email Delivery via Resend
     const resendApiKey = process.env.RESEND_API_KEY;
