@@ -441,7 +441,7 @@ export default function CoachPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Navbar */}
-      <nav className="flex justify-between items-center px-8 py-4 border-b bg-surface border-outline-variant">
+      <nav className="flex flex-wrap md:flex-nowrap justify-between items-center gap-4 px-6 md:px-8 py-4 border-b bg-surface border-outline-variant">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-8 h-8 font-bold rounded bg-primary text-on-primary">
             L
@@ -474,8 +474,8 @@ export default function CoachPage() {
               </span>
             </div>
 
-            <div className="border bg-surface border-outline-variant rounded-xl overflow-hidden shadow-sm">
-              <table className="w-full border-collapse text-left">
+            <div className="border bg-surface border-outline-variant rounded-xl overflow-hidden shadow-sm overflow-x-auto">
+              <table className="w-full border-collapse text-left min-w-[600px]">
                 <thead>
                   <tr className="bg-surface-container-low border-b border-outline-variant">
                     <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Họ và tên</th>
