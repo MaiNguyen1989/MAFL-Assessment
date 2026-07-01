@@ -34,26 +34,26 @@ FOR INSERT
 TO public 
 WITH CHECK (true);
 
--- 2. Only authenticated coaches can select (read) assessments
-CREATE POLICY "Allow authenticated select" 
+-- 2. Anyone can select (read) assessments (required for mock login)
+CREATE POLICY "Allow public select" 
 ON public.assessments 
 FOR SELECT 
-TO authenticated 
+TO public 
 USING (true);
 
--- 3. Only authenticated coaches can update assessments (e.g. status)
-CREATE POLICY "Allow authenticated update" 
+-- 3. Anyone can update assessments (e.g. status)
+CREATE POLICY "Allow public update" 
 ON public.assessments 
 FOR UPDATE 
-TO authenticated 
+TO public 
 USING (true)
 WITH CHECK (true);
 
 -- Policies for coach_reviews table
--- 1. Only authenticated coaches can perform actions (CRUD) on reviews
-CREATE POLICY "Allow authenticated coach manage reviews" 
+-- 1. Anyone can perform actions (CRUD) on reviews
+CREATE POLICY "Allow public manage reviews" 
 ON public.coach_reviews 
 FOR ALL 
-TO authenticated 
+TO public 
 USING (true)
 WITH CHECK (true);
