@@ -105,10 +105,28 @@ export default function CoachPage() {
   const handleDownloadPDF = async (id: string, name: string) => {
     setIsDownloading(true);
     try {
+      const targetCoachee = submissions.find((c) => c.id === id);
+      const payload: any = { assessmentId: id, download: true };
+
+      if (targetCoachee) {
+        payload.assessmentData = {
+          name: targetCoachee.name,
+          email: targetCoachee.email,
+          stage: targetCoachee.stage,
+          scores: targetCoachee.scores,
+          review: targetCoachee.review || {
+            q13: ratings.q13,
+            q14: ratings.q14,
+            q15: ratings.q15,
+            feedback: feedback.trim()
+          }
+        };
+      }
+
       const res = await fetch("/api/send-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assessmentId: id, download: true }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (data.pdf) {

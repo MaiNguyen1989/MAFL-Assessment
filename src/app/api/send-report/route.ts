@@ -6,6 +6,18 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 interface RequestBody {
   assessmentId: string;
   download?: boolean;
+  assessmentData?: {
+    name: string;
+    email: string;
+    stage: string;
+    scores: { L: number; P: number; I: number; S: number };
+    review: {
+      q13: number;
+      q14: number;
+      q15: number;
+      feedback: string;
+    } | null;
+  };
 }
 
 function cleanText(str: string): string {
@@ -20,7 +32,7 @@ function cleanText(str: string): string {
 export async function POST(request: Request) {
   try {
     const body: RequestBody = await request.json();
-    const { assessmentId, download } = body;
+    const { assessmentId, download, assessmentData } = body;
 
     if (!assessmentId) {
       return NextResponse.json({ error: "Missing assessmentId" }, { status: 400 });
@@ -80,6 +92,16 @@ export async function POST(request: Request) {
       q14Stars = review.q14_stars;
       q15Stars = review.q15_stars;
       feedback = review.feedback;
+    } else if (assessmentData) {
+      coacheeName = assessmentData.name;
+      coacheeEmail = assessmentData.email;
+      stage = assessmentData.stage;
+      submittedAt = new Date().toLocaleString("vi-VN");
+      scores = assessmentData.scores;
+      q13Stars = assessmentData.review?.q13 || 0;
+      q14Stars = assessmentData.review?.q14 || 0;
+      q15Stars = assessmentData.review?.q15 || 0;
+      feedback = assessmentData.review?.feedback || "";
     } else {
       // Fallback response for unconfigured local environment
       return NextResponse.json({
