@@ -785,7 +785,7 @@ export default function CoacheePage() {
             </div>
             <h2 className="text-2xl font-bold mb-3 text-on-surface">Nộp bài thành công!</h2>
             <p className="text-base text-on-surface-variant max-w-lg mb-8">
-              Kết quả trắc nghiệm của bạn đã được ghi nhận vào hệ thống. Vui lòng đợi coach nhận xét để nhận được báo cáo đầy đủ qua email.
+              Kết quả trắc nghiệm của bạn đã được ghi nhận vào hệ thống. Vui lòng đợi coach nhận xét và phản hồi.
             </p>
 
             <span className="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[11px] font-bold rounded uppercase tracking-wider mb-4">

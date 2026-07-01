@@ -772,7 +772,7 @@ export default function CoachPage() {
                           type="submit"
                           className="px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-lg text-sm hover:bg-primary-hover shadow-md shadow-primary/15 transition-all"
                         >
-                          Hoàn thành & Gửi báo cáo
+                          Hoàn thành đánh giá
                         </button>
                       )}
                     </div>
@@ -793,9 +793,9 @@ export default function CoachPage() {
             <div className="flex items-center justify-center w-14 h-14 bg-success/10 text-success text-2xl rounded-full mb-5">
               ✓
             </div>
-            <h3 className="text-lg font-bold mb-3">Gửi Báo Cáo Thành Công!</h3>
+            <h3 className="text-lg font-bold mb-3">Hoàn Thành Đánh Giá!</h3>
             <p className="text-sm text-on-surface-variant leading-relaxed mb-6">
-              Báo cáo đánh giá (file PDF có biểu đồ mạng nhện kèm nhận xét chi tiết của Coach) đã được tạo tự động và gửi thành công tới email của cả Coachee và Coach.
+              Báo cáo đánh giá (file PDF có biểu đồ mạng nhện kèm nhận xét chi tiết của Coach) đã được tạo tự động thành công. Bạn có thể tải file PDF báo cáo trực tiếp dưới đây.
             </p>
             <div className="w-full flex flex-col gap-3">
               <button

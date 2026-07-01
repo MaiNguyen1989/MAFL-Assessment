@@ -231,42 +231,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, pdf: doc.output("datauristring") });
     }
 
-    // 2. Email Delivery via Resend
-    const resendApiKey = process.env.RESEND_API_KEY;
-    if (resendApiKey) {
-      const resend = new Resend(resendApiKey);
-      const pdfBase64 = doc.output("datauristring").split(",")[1];
-
-      await resend.emails.send({
-        from: "MAFL Assessment <onboarding@resend.dev>",
-        to: [coacheeEmail],
-        subject: `[MAFL Assessment] Bao cao danh gia nang luc Lanh dao - ${coacheeName}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #181c23; line-height: 1.6;">
-            <h2 style="color: #0058bc;">Kết quả đánh giá chương trình MAFL</h2>
-            <p>Chào <strong>${coacheeName}</strong>,</p>
-            <p>Coach của bạn đã hoàn thành nhận xét và đánh giá cho bài làm của bạn ở <strong>${stage}</strong>.</p>
-            <p>Báo cáo đánh giá chi tiết (bao gồm biểu đồ mạng nhện tự nhận diện năng suất và nhận xét chuyên môn) đã được kết xuất dưới dạng file PDF và đính kèm trong email này.</p>
-            <p>Vui lòng kiểm tra file đính kèm để xem chi tiết.</p>
-            <hr style="border: 0; border-top: 1px solid #ecedf9; margin: 25px 0;" />
-            <p style="font-size: 11px; color: #525f71;">Đây là email tự động gửi từ hệ thống Leadership Development Assessment.</p>
-          </div>
-        `,
-        attachments: [
-          {
-            filename: `Bao_cao_MAFL_${coacheeName.replace(/\s+/g, "_")}.pdf`,
-            content: pdfBase64,
-          },
-        ],
-      });
-      return NextResponse.json({ success: true, message: "PDF Generated and Email sent via Resend." });
-    } else {
-      console.log("RESEND_API_KEY is not configured. Simulating successful mail send.");
-      return NextResponse.json({
-        success: true,
-        message: "Supabase and Resend are not configured. Generated report locally and simulated email delivery.",
-      });
-    }
+    return NextResponse.json({ success: true, message: "PDF Generated successfully." });
   } catch (error: any) {
     console.error("Report generation/sending failed:", error);
     return NextResponse.json({ error: error.message || "Failed to generate report" }, { status: 500 });
