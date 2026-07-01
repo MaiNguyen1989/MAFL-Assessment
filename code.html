@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Student Onboarding | Apex Leadership</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#c1c6d7",
+                    "secondary-container": "#d3e1f6",
+                    "secondary": "#525f71",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#f9f9ff",
+                    "on-secondary-container": "#566475",
+                    "on-secondary-fixed-variant": "#3a4859",
+                    "primary-container": "#0070eb",
+                    "on-surface-variant": "#414755",
+                    "inverse-on-surface": "#eef0fc",
+                    "primary": "#0058bc",
+                    "on-primary-container": "#fefcff",
+                    "on-error": "#ffffff",
+                    "on-background": "#181c23",
+                    "surface-tint": "#005bc1",
+                    "on-secondary-fixed": "#0f1c2c",
+                    "on-primary-fixed-variant": "#004493",
+                    "tertiary-container": "#727577",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#595c5e",
+                    "inverse-primary": "#adc6ff",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#d8e2ff",
+                    "on-primary-fixed": "#001a41",
+                    "on-tertiary-container": "#fbfdff",
+                    "surface-container-low": "#f1f3fe",
+                    "on-surface": "#181c23",
+                    "primary-fixed-dim": "#adc6ff",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#e0e3e5",
+                    "secondary-fixed": "#d6e4f9",
+                    "on-primary": "#ffffff",
+                    "outline": "#717786",
+                    "inverse-surface": "#2d3039",
+                    "surface-dim": "#d8d9e5",
+                    "surface-container-highest": "#e0e2ed",
+                    "error": "#ba1a1a",
+                    "background": "#f9f9ff",
+                    "surface-container-high": "#e6e8f3",
+                    "secondary-fixed-dim": "#bac8dc",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "surface-bright": "#f9f9ff",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#191c1e",
+                    "surface-container": "#ecedf9",
+                    "surface-variant": "#e0e2ed"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "stack-md": "24px",
+                    "container-max": "1280px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "12px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-xl-mobile": ["32px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9ff;
+            color: #181c23;
+            overflow-x: hidden;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+        }
+
+        .step-transition {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col">
+<!-- Bright Airy Background Elements -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+<div class="absolute -top-[10%] -left-[5%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px] floating-element" style="animation-delay: 0s;"></div>
+<div class="absolute top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-secondary-container/10 blur-[150px] floating-element" style="animation-delay: 2s;"></div>
+<div class="absolute -bottom-[10%] left-[20%] w-[35%] h-[35%] rounded-full bg-primary-container/5 blur-[100px] floating-element" style="animation-delay: 4s;"></div>
+</div>
+<!-- Top Navigation Placeholder (Hidden per "Shell Visibility" rule for Transactional screens, but following TopNavBar JSON keys for Branding identity) -->
+<header class="w-full h-16 flex justify-between items-center px-margin-desktop z-10">
+<div class="font-headline-md text-headline-md font-bold text-primary">Apex Leadership</div>
+<div class="hidden md:flex items-center gap-6">
+<span class="font-label-md text-label-md text-secondary">Step 1 of 3</span>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center px-margin-mobile py-stack-lg z-10">
+<div class="w-full max-w-2xl">
+<!-- Asymmetric Bento-style Layout for Intro -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-stack-lg">
+<div class="md:col-span-8 flex flex-col justify-end">
+<h1 class="font-headline-xl-mobile md:font-headline-xl text-headline-xl-mobile md:text-headline-xl text-on-background mb-4">
+                        Begin your journey to <span class="text-primary">Executive Mastery.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                        Join the next generation of strategic thinkers. Complete your profile to unlock personalized coaching assessments and cohort-based learning.
+                    </p>
+</div>
+<div class="md:col-span-4 flex items-center justify-center">
+<div class="w-full aspect-square glass-card rounded-xl flex items-center justify-center p-6 shadow-sm overflow-hidden relative group">
+<img class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-700" data-alt="A minimalist architectural photograph of a sleek glass staircase leading upwards in a bright, sunlit atrium. High-key lighting emphasizes the clean lines and white surfaces, creating a feeling of progress and professional growth. The visual style is refined and modern, mirroring a premium leadership consultancy brand with subtle blue undertones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjHCNLf-7ux2USLjikat4r1Lalu1TZA0eMioemlCRiOaW4I_CEankQ8KRQVPG1paoZiiXU6-C2D0c-0D6dA05CCy53OIuQ5Zfv4Bnt1mpShAKj1NIqbTpuVWkay-46kXwZ1CJn22HlcRzi5q2zFdkzCDTMOiLbE9VPX5Zu0C0Nc2P_Q9UwfrPREodoKyRiDRnTwwRn8wRUUshxN9xZlX_0Q4twovCKrcn74NEdVzPbhwuNhWOmK16fYRpoOSboQGPTThCDdpw2UBRC"/>
+</div>
+</div>
+</div>
+<!-- Onboarding Form Card -->
+<div class="glass-card rounded-xl p-stack-md md:p-stack-lg shadow-sm border-outline-variant/30">
+<form class="space-y-stack-md" id="onboardingForm">
+<!-- Input: Full Name -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="full_name">Full Name</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md text-body-md text-on-surface" id="full_name" name="full_name" placeholder="Alexander Hamilton" required="" type="text"/>
+</div>
+</div>
+<!-- Input: Email -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="email">Work Email</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">mail</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md text-body-md text-on-surface" id="email" name="email" placeholder="alex@apex-global.com" required="" type="email"/>
+</div>
+</div>
+<!-- Input: Training Phase -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1">Training Phase</label>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-base">
+<label class="relative flex items-center p-4 cursor-pointer rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-all group has-[:checked]:border-primary has-[:checked]:bg-secondary-container/20">
+<input checked="" class="sr-only" name="phase" type="radio" value="foundation"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Foundation</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Core Principles</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-primary opacity-0 group-has-[:checked]:opacity-100 transition-opacity">check_circle</span>
+</label>
+<label class="relative flex items-center p-4 cursor-pointer rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-all group has-[:checked]:border-primary has-[:checked]:bg-secondary-container/20">
+<input class="sr-only" name="phase" type="radio" value="strategic"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Strategic</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Advanced Logic</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-primary opacity-0 group-has-[:checked]:opacity-100 transition-opacity">check_circle</span>
+</label>
+<label class="relative flex items-center p-4 cursor-pointer rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-all group has-[:checked]:border-primary has-[:checked]:bg-secondary-container/20">
+<input class="sr-only" name="phase" type="radio" value="executive"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Executive</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Boardroom Prep</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-primary opacity-0 group-has-[:checked]:opacity-100 transition-opacity">check_circle</span>
+</label>
+</div>
+</div>
+<!-- CTA Button -->
+<div class="pt-4">
+<button class="w-full py-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-lg hover:shadow-primary/20 hover:bg-primary/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group" type="submit">
+                            Continue to Assessments
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Footer Help Text -->
+<div class="mt-stack-md flex justify-center items-center gap-8">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span class="font-label-sm text-label-sm">Secure Enrollment</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">support_agent</span>
+<span class="font-label-sm text-label-sm">Concierge Support</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Success Modal (Hidden initially) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-on-background/10 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300" id="successModal">
+<div class="glass-card w-full max-w-md p-stack-lg rounded-xl shadow-2xl text-center scale-95 transition-transform duration-300 transform-gpu" id="modalContent">
+<div class="w-20 h-20 bg-secondary-container text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background mb-2">Welcome Aboard</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">Your profile has been created. Redirecting you to the Apex Leadership dashboard...</p>
+<div class="w-full bg-outline-variant/30 h-1.5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-0 transition-all duration-[2000ms] ease-out" id="progressBar"></div>
+</div>
+</div>
+</div>
+<script>
+        document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const modal = document.getElementById('successModal');
+            const modalContent = document.getElementById('modalContent');
+            const progressBar = document.getElementById('progressBar');
+            
+            // Show modal with animation
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+            
+            // Start progress bar animation
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+            }, 100);
+
+            // Simulation of redirect
+            setTimeout(() => {
+                alert('Onboarding Complete! In a real app, you would be navigated to your personal Dashboard.');
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        });
+
+        // Add focus effects to inputs for micro-interactions
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('scale-[1.01]');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+    </script>
+</body></html>

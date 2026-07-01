@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leadership development assessment - Đánh Giá Tiến Triển Coachee</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN for Radar Chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* DESIGN SYSTEM VARIABLES (DESIGN.md) */
+    :root {
+      --color-background: #f9f9ff;
+      --color-surface: #ffffff;
+      --color-surface-dim: #d8d9e5;
+      --color-surface-container-low: #f1f3fe;
+      --color-surface-container: #ecedf9;
+      --color-surface-container-high: #e6e8f3;
+      --color-surface-container-highest: #e0e2ed;
+      --color-on-surface: #181c23;
+      --color-on-surface-variant: #414755;
+      --color-primary: #0058bc;
+      --color-primary-hover: #004493;
+      --color-primary-container: #0070eb;
+      --color-on-primary: #ffffff;
+      --color-secondary: #525f71;
+      --color-secondary-container: #d3e1f6;
+      --color-on-secondary-container: #566475;
+      --color-outline: #717786;
+      --color-outline-variant: #c1c6d7;
+      --color-error: #ba1a1a;
+      --color-success: #1a8754;
+      
+      --font-family: 'Inter', sans-serif;
+      --radius-sm: 0.25rem;
+      --radius-default: 0.5rem;
+      --radius-md: 0.75rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.5rem;
+      --radius-full: 9999px;
+      
+      --spacing-base: 8px;
+      --container-max: 960px;
+      --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* GLOBAL STYLES */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--color-background);
+      color: var(--color-on-surface);
+      line-height: 1.6;
+      padding: 24px 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* CONTAINER & LAYOUT */
+    .app-container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      flex-grow: 1;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-on-primary);
+      font-weight: 700;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(0, 88, 188, 0.25);
+    }
+
+    .brand-name {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--color-primary);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: var(--color-on-surface);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--color-on-surface-variant);
+    }
+
+    /* PROGRESS BAR */
+    .progress-wrapper {
+      background: var(--color-surface);
+      border: 1px border var(--color-outline-variant);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-step-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .progress-percentage {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-on-surface-variant);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background-color: var(--color-surface-container-low);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 25%;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+      transition: var(--transition-default);
+    }
+
+    /* MAIN CARD & WIZARD FORM */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-outline-variant);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015);
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .wizard-step {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .wizard-step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FORM ELEMENTS */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-on-surface);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 16px;
+      font-family: var(--font-family);
+      font-size: 15px;
+      border: 1px solid var(--color-outline-variant);
+      border-radius: var(--radius-default);
+      background-color: var(--color-surface);
+      color: var(--color-on-surface);
+      transition: var(--transition-default);
+      outline: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(0, 88, 188, 0.15);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    /* ASSESSMENT QUESTIONS */
+    .question-card {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--color-surface-container-high);
+    }
+
+    .question-card:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .question-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-on-surface);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .question-num {
+      background-color: var(--color-surface-container-high);
+      color: var(--color-on-surface-variant);
+      font-size: 12px;
+      font-weight: 700;
+      width: 24px;
+      height: 24px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* OPTION PILLS */
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background-color: var(--color-background);
+      border: 1px solid var(--color-outline-variant);
+      border-radius: var(--radius-default);
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      transition: var(--transition-default);
+    }
+
+    .option-label:hover {
+      background-color: var(--color-surface-container-low);
+      border-color: var(--color-primary-container);
+    }
+
+    .option-radio {
+      display: none;
+    }
+
+    .option-radio:checked + .option-text-wrapper {
+      color: var(--color-primary);
+    }
+
+    .option-label.selected {
+      background-color: var(--color-secondary-container);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .option-letter {
+      font-weight: 700;
+      margin-right: 12px;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-outline-variant);
+      width: 24px;
+      height: 24px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+      transition: var(--transition-default);
+    }
+
+    .option-label.selected .option-letter {
+      border-color: var(--color-primary);
+      background-color: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+
+    /* MULTI-SELECT CHECKBOXES */
+    .checkbox-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 600px) {
+      .checkbox-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      background-color: var(--color-background);
+      border: 1px solid var(--color-outline-variant);
+      border-radius: var(--radius-default);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-default);
+    }
+
+    .checkbox-label:hover {
+      background-color: var(--color-surface-container-low);
+    }
+
+    .checkbox-label.selected {
+      background-color: var(--color-secondary-container);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .checkbox-input {
+      margin-top: 4px;
+    }
+
+    /* BUTTONS NAVIGATION */
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      font-family: var(--font-family);
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: var(--radius-default);
+      cursor: pointer;
+      transition: var(--transition-default);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-on-primary);
+      box-shadow: 0 4px 12px rgba(0, 88, 188, 0.15);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border: 1px solid var(--color-outline);
+      color: var(--color-secondary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-surface-container-low);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* SUCCESS STATE */
+    .success-container {
+      text-align: center;
+      padding: 24px 0;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background-color: rgba(26, 135, 84, 0.1);
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-success);
+      font-size: 36px;
+      margin-bottom: 24px;
+      animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes scaleUp {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .success-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-on-surface);
+      margin-bottom: 12px;
+    }
+
+    .success-text {
+      font-size: 16px;
+      color: var(--color-on-surface-variant);
+      max-width: 540px;
+      margin: 0 auto 32px;
+    }
+
+    /* PROTOTYPE UTILITIES */
+    .prototype-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background-color: var(--color-secondary-container);
+      color: var(--color-on-secondary-container);
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+
+    .radar-chart-container {
+      max-width: 400px;
+      margin: 32px auto 0;
+      padding: 16px;
+      border: 1px solid var(--color-outline-variant);
+      border-radius: var(--radius-lg);
+      background-color: var(--color-surface-container-low);
+      display: none;
+    }
+
+    .btn-prototype {
+      background-color: var(--color-surface-container-highest);
+      color: var(--color-on-surface);
+      border: 1px dashed var(--color-outline);
+    }
+
+    .btn-prototype:hover {
+      background-color: var(--color-surface-container-high);
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 600px) {
+      .card {
+        padding: 24px 16px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+      .brand-name {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- BRAND HEADER -->
+    <header>
+      <div class="brand">
+        <div class="brand-logo">L</div>
+        <span class="brand-name">Leadership development assessment</span>
+      </div>
+      <h1 id="main-heading">Đánh Giá Tiến Triển Coachee</h1>
+      <p class="subtitle" id="main-subtitle">Chương trình đo lường tư duy & năng lực lãnh đạo</p>
+    </header>
+
+    <!-- STEP PROGRESS BAR -->
+    <div class="progress-wrapper" id="progress-wrapper">
+      <div class="progress-info">
+        <span class="progress-step-title" id="progress-step-title">Bước 1: Thông tin cá nhân</span>
+        <span class="progress-percentage" id="progress-percentage">25% Hoàn thành</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- MAIN FORM CONTAINER -->
+    <div class="card">
+      <form id="assessment-form" onsubmit="event.preventDefault();">
+        
+        <!-- STEP 1: PERSONAL INFORMATION -->
+        <div class="wizard-step active" id="step-1">
+          <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Thông tin Coachee</h2>
+            <p style="font-size: 14px; color: var(--color-on-surface-variant);">Vui lòng cung cấp chính xác thông tin để lưu trữ dữ liệu và nhận báo cáo đánh giá qua email.</p>
+          </div>
+          
+          <div class="form-group">
+            <label for="fullName">Họ và tên của bạn</label>
+            <input type="text" id="fullName" placeholder="Ví dụ: Nguyễn Văn Hùng" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Địa chỉ Email</label>
+            <input type="email" id="email" placeholder="Ví dụ: hung.nguyen@insurance.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="stage">Giai đoạn đánh giá trong chương trình coaching</label>
+            <select id="stage" required>
+              <option value="" disabled selected>-- Chọn giai đoạn đánh giá --</option>
+              <option value="Giai đoạn 1">Giai đoạn 1</option>
+              <option value="Giai đoạn 2" disabled>Giai đoạn 2 (Chưa mở khóa)</option>
+              <option value="Giai đoạn 3" disabled>Giai đoạn 3 (Chưa mở khóa)</option>
+              <option value="Giai đoạn 4" disabled>Giai đoạn 4 (Chưa mở khóa)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- STEP 2: MULTIPLE CHOICE QUESTIONS (Q1-Q6) -->
+        <div class="wizard-step" id="step-2">
+          <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Phần 1: Trắc nghiệm Tư duy Lãnh đạo & Hiệu suất</h2>
+            <p style="font-size: 14px; color: var(--color-on-surface-variant);">Chọn phương án mô tả đúng nhất với tần suất hoặc thực tế hành động của bạn.</p>
+          </div>
+          
+          <div id="questions-container-part-1">
+            <!-- Questions 1 to 6 will be generated dynamically here -->
+          </div>
+        </div>
+
+        <!-- STEP 3: MULTIPLE CHOICE QUESTIONS (Q7-Q12) -->
+        <div class="wizard-step" id="step-3">
+          <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Phần 2: Trắc nghiệm Tự chủ & Phát triển hệ thống</h2>
+            <p style="font-size: 14px; color: var(--color-on-surface-variant);">Tiếp tục chọn phương án mô tả đúng nhất với thực tế quản trị của bạn.</p>
+          </div>
+          
+          <div id="questions-container-part-2">
+            <!-- Questions 7 to 12 will be generated dynamically here -->
+          </div>
+        </div>
+
+        <!-- STEP 4: ESSAY QUESTIONS (Q13-Q15) -->
+        <div class="wizard-step" id="step-4">
+          <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Phần 3: Định hướng & Cam kết Hành động</h2>
+            <p style="font-size: 14px; color: var(--color-on-surface-variant);">Hãy chia sẻ sâu sắc hơn về các bài học và định hướng hành động của bạn.</p>
+          </div>
+
+          <!-- Q13 -->
+          <div class="question-card">
+            <div class="question-title">
+              <span class="question-num">13</span>
+              <span>Nhìn lại Giai đoạn 1, điều gì bạn học được từ chương trình coaching đã tạo ra thay đổi rõ nhất trong cách lãnh đạo hoặc vận hành khu vực của mình? (Có thể chọn nhiều ý)</span>
+            </div>
+            <div class="checkbox-container">
+              <label class="checkbox-label" onclick="toggleCheckboxQ13(this)">
+                <input type="checkbox" name="q13_opts" value="Thay đổi tư duy vai trò người lãnh đạo" class="checkbox-input">
+                <span>Thay đổi tư duy về vai trò của người lãnh đạo</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ13(this)">
+                <input type="checkbox" name="q13_opts" value="Biết lập Roadmap & mục tiêu dài hạn" class="checkbox-input">
+                <span>Biết lập Roadmap và mục tiêu dài hạn cho đội ngũ</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ13(this)">
+                <input type="checkbox" name="q13_opts" value="Quản trị bằng KPI, Dashboard, PDCA" class="checkbox-input">
+                <span>Quản trị bằng KPI, Dashboard và PDCA thay vì cảm tính</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ13(this)">
+                <input type="checkbox" name="q13_opts" value="Coaching phát triển cấp dưới thay vì làm thay" class="checkbox-input">
+                <span>Coaching và phát triển quản lý cấp dưới thay vì làm thay</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ13(this)">
+                <input type="checkbox" name="q13_opts" value="Chuẩn hóa quy trình & kỷ luật hoạt động" class="checkbox-input">
+                <span>Chuẩn hóa quy trình và kỷ luật hoạt động</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ13(this)">
+                <input type="checkbox" name="q13_opts" value="Biết phân tích nguyên nhân gốc" class="checkbox-input">
+                <span>Biết phân tích nguyên nhân gốc trước khi đưa ra giải pháp</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ13(this)">
+                <input type="checkbox" name="q13_opts" value="Xây dựng văn hóa chủ động" class="checkbox-input">
+                <span>Xây dựng văn hóa chủ động và tinh thần trách nhiệm cho đội ngũ</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ13(this)" style="grid-column: 1 / -1;">
+                <input type="checkbox" name="q13_opts" value="Khác" class="checkbox-input">
+                <span>Khác (vui lòng ghi chi tiết ở phần giải thích dưới đây)</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="q13_reason" style="font-weight: 500; font-size: 13px;">Theo bạn, thay đổi này đã tạo ra kết quả gì cho khu vực?</label>
+              <textarea id="q13_reason" placeholder="Mô tả kết quả thực tế cụ thể..." required></textarea>
+            </div>
+          </div>
+
+          <!-- Q14 -->
+          <div class="question-card" style="margin-top: 24px;">
+            <div class="question-title">
+              <span class="question-num">14</span>
+              <span>Bước sang Giai đoạn 2, bạn mong muốn phát triển mạnh nhất ở nội dung nào? (Chọn tối đa 03 nội dung)</span>
+            </div>
+            <div class="checkbox-container">
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)">
+                <input type="checkbox" name="q14_opts" value="Nâng cao năng lực Coaching" class="checkbox-input">
+                <span>Nâng cao năng lực Coaching và phát triển quản lý</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)">
+                <input type="checkbox" name="q14_opts" value="Xây dựng đội ngũ tự vận hành" class="checkbox-input">
+                <span>Xây dựng đội ngũ tự vận hành khi tôi vắng mặt</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)">
+                <input type="checkbox" name="q14_opts" value="Nâng cao chất lượng tuyển dụng" class="checkbox-input">
+                <span>Nâng cao chất lượng tuyển dụng và phát triển TVV mới</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)">
+                <input type="checkbox" name="q14_opts" value="Chuẩn hóa hệ thống quản trị" class="checkbox-input">
+                <span>Chuẩn hóa hệ thống quản trị và quy trình làm việc</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)">
+                <input type="checkbox" name="q14_opts" value="Phát triển đội ngũ kế thừa" class="checkbox-input">
+                <span>Phát triển đội ngũ quản lý kế thừa</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)">
+                <input type="checkbox" name="q14_opts" value="Nâng cao hiệu quả kinh doanh" class="checkbox-input">
+                <span>Nâng cao hiệu quả kinh doanh và chất lượng hoạt động</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)">
+                <input type="checkbox" name="q14_opts" value="Xây dựng văn hóa tích cực" class="checkbox-input">
+                <span>Xây dựng văn hóa đội ngũ tích cực và chủ động</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)">
+                <input type="checkbox" name="q14_opts" value="Ứng dụng công nghệ" class="checkbox-input">
+                <span>Ứng dụng công nghệ, tự động hóa trong quản lý</span>
+              </label>
+              <label class="checkbox-label" onclick="toggleCheckboxQ14(this)" style="grid-column: 1 / -1;">
+                <input type="checkbox" name="q14_opts" value="Khác" class="checkbox-input">
+                <span>Nội dung khác (vui lòng ghi chi tiết ở phần giải thích dưới đây)</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="q14_reason" style="font-weight: 500; font-size: 13px;">Bạn mong muốn Coach hỗ trợ mình điều gì nhiều nhất trong Giai đoạn 2?</label>
+              <textarea id="q14_reason" placeholder="Nêu rõ các mong đợi được Coach đồng hành, hướng dẫn..." required></textarea>
+            </div>
+          </div>
+
+          <!-- Q15 -->
+          <div class="question-card" style="margin-top: 24px; border-bottom: none;">
+            <div class="question-title">
+              <span class="question-num">15</span>
+              <span>Nếu chỉ được chọn MỘT thay đổi quan trọng nhất để tạo ra bước đột phá cho khu vực trong Giai đoạn 2, bạn sẽ cam kết thay đổi điều gì trước tiên?</span>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+              <textarea id="q15_commitment" placeholder="Cam kết hành động cụ thể..." required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="q15_reason" style="font-weight: 500; font-size: 13px;">Vì sao bạn chọn điều này?</label>
+              <textarea id="q15_reason" placeholder="Nêu động lực hoặc tầm quan trọng của thay đổi này..." required></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: SUBMITTED SUCCESS & PROTOTYPE CHART -->
+        <div class="wizard-step" id="step-5">
+          <div class="success-container">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">Nộp bài thành công!</h2>
+            <p class="success-text">
+              Kết quả trắc nghiệm của bạn đã được ghi nhận vào hệ thống. Vui lòng đợi coach nhận xét để nhận được báo cáo đầy đủ qua email.
+            </p>
+            
+            <span class="prototype-badge">Phiên bản thử nghiệm (Prototype Only)</span>
+            <div>
+              <button type="button" class="btn btn-prototype" id="btn-show-chart" onclick="showMockRadarChart()">
+                👁 Xem nhanh biểu đồ đánh giá trắc nghiệm sơ bộ
+              </button>
+            </div>
+
+            <!-- Radar chart display wrapper -->
+            <div class="radar-chart-container" id="radar-chart-container">
+              <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--color-primary);">Biểu Đồ Trắc Nghiệm Sơ Bộ (12 Câu)</h3>
+              <canvas id="radarChart" width="300" height="300"></canvas>
+              <div style="margin-top: 12px; font-size: 12px; color: var(--color-on-surface-variant); text-align: left; line-height: 1.4;">
+                <strong>Chú thích 4 trục:</strong><br>
+                - <strong>L (Leadership):</strong> Tầm nhìn & Phát triển đội ngũ.<br>
+                - <strong>P (Performance):</strong> Hiệu suất & KPIs kinh doanh.<br>
+                - <strong>I (Independence):</strong> Tự chủ & Ra quyết định độc lập.<br>
+                - <strong>S (System):</strong> Hệ thống hóa quy trình quản trị.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- NAVIGATION BUTTONS -->
+      <div class="navigation-buttons" id="nav-buttons">
+        <button type="button" class="btn btn-secondary" id="btn-prev" onclick="changeStep(-1)" disabled>
+          ← Quay lại
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-next" onclick="changeStep(1)">
+          Tiếp tục →
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // 12 LEADERSHIP QUESTIONS DATA
+    const questions = [
+      {
+        id: 1,
+        text: "Khi đội ngũ gặp vấn đề, cách bạn thường xử lý nhất là:",
+        axis: "L",
+        options: [
+          { key: "A", val: 2, text: "Tôi thường trực tiếp giải quyết hoặc làm thay để công việc hoàn thành nhanh." },
+          { key: "B", val: 4, text: "Tôi giải thích cho họ biết vấn đề nhưng vẫn phải theo sát từng việc." },
+          { key: "C", val: 6, text: "Tôi giao việc rõ ràng, quy định kết quả mong đợi rồi theo dõi định kỳ." },
+          { key: "D", val: 8, text: "Tôi chủ yếu đặt câu hỏi để họ tự tìm giải pháp và chịu trách nhiệm." },
+          { key: "E", val: 10, text: "Đội ngũ chủ động xử lý theo nguyên tắc chung mà không cần tôi can thiệp." }
+        ]
+      },
+      {
+        id: 2,
+        text: "Phần lớn thời gian làm việc của bạn đang dành cho:",
+        axis: "L",
+        options: [
+          { key: "A", val: 2, text: "Làm việc chuyên môn và xử lý công việc cá nhân." },
+          { key: "B", val: 4, text: "Giải quyết các sự vụ phát sinh trong ngày." },
+          { key: "C", val: 6, text: "Theo dõi hoạt động và kiểm tra tiến độ đội ngũ." },
+          { key: "D", val: 8, text: "Coaching và phát triển năng lực quản lý cấp dưới." },
+          { key: "E", val: 10, text: "Xây dựng văn hóa và phát triển đội ngũ kế thừa." }
+        ]
+      },
+      {
+        id: 3,
+        text: "Khi một quản lý cấp dưới chưa đạt kết quả, bạn thường:",
+        axis: "L",
+        options: [
+          { key: "A", val: 2, text: "Chỉ rõ họ cần làm gì." },
+          { key: "B", val: 4, text: "Phân tích nguyên nhân rồi hướng dẫn." },
+          { key: "C", val: 6, text: "Yêu cầu lập kế hoạch cải thiện và đánh giá định kỳ." },
+          { key: "D", val: 8, text: "Coaching để họ tự xây giải pháp." },
+          { key: "E", val: 10, text: "Để người cố vấn (mentor) hoặc quản lý trực tiếp coaching mà không cần tôi." }
+        ]
+      },
+      {
+        id: 4,
+        text: "Khi doanh số không đạt kế hoạch, việc đầu tiên bạn làm là:",
+        axis: "P",
+        options: [
+          { key: "A", val: 2, text: "Thúc đội ngũ làm nhiều hơn." },
+          { key: "B", val: 4, text: "Tìm nguyên nhân sau khi kết quả đã xảy ra." },
+          { key: "C", val: 6, text: "Họp đánh giá và lập kế hoạch hành động." },
+          { key: "D", val: 8, text: "Theo dõi biểu đồ cập nhật (dashboard) hằng tuần để điều chỉnh sớm." },
+          { key: "E", val: 10, text: "Hệ thống tự cảnh báo và đội ngũ tự điều chỉnh." }
+        ]
+      },
+      {
+        id: 5,
+        text: "Việc theo dõi KPI hiện nay của bạn là:",
+        axis: "P",
+        options: [
+          { key: "A", val: 2, text: "Chủ yếu nhìn kết quả cuối tháng." },
+          { key: "B", val: 4, text: "Có xem giữa tháng nhưng chưa đều." },
+          { key: "C", val: 6, text: "Đánh giá hằng tuần." },
+          { key: "D", val: 8, text: "Theo dõi bằng biểu đồ cập nhật theo thời gian thực." },
+          { key: "E", val: 10, text: "Biểu đồ cập nhật tự dự báo và hỗ trợ ra quyết định." }
+        ]
+      },
+      {
+        id: 6,
+        text: "Sau mỗi cuộc họp đánh giá:",
+        axis: "P",
+        options: [
+          { key: "A", val: 2, text: "Ít có thay đổi cụ thể." },
+          { key: "B", val: 4, text: "Có nhiều ý tưởng nhưng ít theo đến cùng." },
+          { key: "C", val: 6, text: "Có kế hoạch hành động và người phụ trách." },
+          { key: "D", val: 8, text: "Theo dõi tỷ lệ hoàn thành kế hoạch hành động định kỳ." },
+          { key: "E", val: 10, text: "Đội ngũ tự tổ chức lập kế hoạch – thực hiện – kiểm tra – điều chỉnh (PDCA) mà không cần tôi." }
+        ]
+      },
+      {
+        id: 7,
+        text: "Nếu bạn phải vắng mặt một tuần:",
+        axis: "I",
+        options: [
+          { key: "A", val: 2, text: "Công việc gần như dừng lại." },
+          { key: "B", val: 4, text: "Chỉ xử lý được việc thường ngày." },
+          { key: "C", val: 6, text: "Hoạt động vẫn diễn ra nhưng hiệu quả giảm." },
+          { key: "D", val: 8, text: "Hầu hết công việc vẫn vận hành ổn định." },
+          { key: "E", val: 10, text: "Hệ thống vẫn tăng trưởng gần như bình thường." }
+        ]
+      },
+      {
+        id: 8,
+        text: "Khi cần ra quyết định:",
+        axis: "I",
+        options: [
+          { key: "A", val: 2, text: "Hầu hết đều phải hỏi tôi." },
+          { key: "B", val: 4, text: "Một số việc họ tự làm, việc quan trọng vẫn chờ tôi." },
+          { key: "C", val: 6, text: "Quản lý cấp dưới xử lý phần lớn công việc." },
+          { key: "D", val: 8, text: "Họ chủ động xử lý và chỉ báo cáo những việc đặc biệt." },
+          { key: "E", val: 10, text: "Các Quản lý kế cận hoàn toàn có thể thay tôi điều hành." }
+        ]
+      },
+      {
+        id: 9,
+        text: "Điều gì khiến bạn bận nhất hiện nay?",
+        axis: "I",
+        options: [
+          { key: "A", val: 2, text: "Phải tự giải quyết mọi việc." },
+          { key: "B", val: 4, text: "Phải nhắc việc liên tục." },
+          { key: "C", val: 6, text: "Phải kiểm tra vì chưa yên tâm." },
+          { key: "D", val: 8, text: "Chủ yếu coaching và phát triển lãnh đạo kế cận." },
+          { key: "E", val: 10, text: "Chủ yếu suy nghĩ chiến lược vì đội ngũ đã tự vận hành." }
+        ]
+      },
+      {
+        id: 10,
+        text: "Công việc hiện nay được quản lý bằng:",
+        axis: "S",
+        options: [
+          { key: "A", val: 2, text: "Chủ yếu trao đổi miệng." },
+          { key: "B", val: 4, text: "Có biểu mẫu nhưng chưa thống nhất." },
+          { key: "C", val: 6, text: "Có quy trình và biểu mẫu chung." },
+          { key: "D", val: 8, text: "Có biểu đồ cập nhật và công cụ theo dõi." },
+          { key: "E", val: 10, text: "Quy trình được số hóa và tự động hóa phần lớn." }
+        ]
+      },
+      {
+        id: 11,
+        text: "Khi có người mới tiếp quản công việc:",
+        axis: "S",
+        options: [
+          { key: "A", val: 2, text: "Phải học trực tiếp từ tôi." },
+          { key: "B", val: 4, text: "Chủ yếu hỏi người cũ." },
+          { key: "C", val: 6, text: "Có tài liệu hướng dẫn." },
+          { key: "D", val: 8, text: "Có quy trình chuẩn và danh mục đầu việc." },
+          { key: "E", val: 10, text: "Chỉ cần học trên hệ thống là có thể làm việc." }
+        ]
+      },
+      {
+        id: 12,
+        text: "Theo bạn, giá trị lớn nhất bạn tạo cho đội ngũ hiện nay là:",
+        axis: "S",
+        options: [
+          { key: "A", val: 2, text: "Tôi trực tiếp tạo doanh số." },
+          { key: "B", val: 4, text: "Tôi giúp giải quyết vấn đề." },
+          { key: "C", val: 6, text: "Tôi giúp mọi người hoàn thành công việc." },
+          { key: "D", val: 8, text: "Tôi giúp đội ngũ phát triển năng lực." },
+          { key: "E", val: 10, text: "Tôi xây dựng được hệ thống giúp mọi người thành công ngay cả khi tôi không có mặt." }
+        ]
+      }
+    ];
+
+    // DYNAMIC QUESTION RENDERING
+    function renderQuestions() {
+      const part1Container = document.getElementById("questions-container-part-1");
+      const part2Container = document.getElementById("questions-container-part-2");
+      
+      // Render Q1 - Q6 (Part 1)
+      part1Container.innerHTML = questions.slice(0, 6).map(q => createQuestionHTML(q)).join("");
+      
+      // Render Q7 - Q12 (Part 2)
+      part2Container.innerHTML = questions.slice(6, 12).map(q => createQuestionHTML(q)).join("");
+    }
+
+    function createQuestionHTML(q) {
+      return `
+        <div class="question-card" data-qid="${q.id}">
+          <div class="question-title">
+            <span class="question-num">${q.id}</span>
+            <span>${q.text}</span>
+          </div>
+          <div class="options-container">
+            ${q.options.map(opt => `
+              <label class="option-label" onclick="selectOption(this, ${q.id}, '${opt.key}')">
+                <input type="radio" name="q_${q.id}" value="${opt.val}" class="option-radio" required>
+                <span class="option-letter">${opt.key}</span>
+                <span class="option-text">${opt.text}</span>
+              </label>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    // INTERACTIVE HELPERS FOR SELECTION
+    function selectOption(labelElement, qId, optKey) {
+      const questionCard = labelElement.closest('.question-card');
+      questionCard.querySelectorAll('.option-label').forEach(lbl => {
+        lbl.classList.remove('selected');
+      });
+      labelElement.classList.add('selected');
+    }
+
+    function toggleCheckboxQ13(labelElement) {
+      const checkbox = labelElement.querySelector('input[type="checkbox"]');
+      setTimeout(() => {
+        if (checkbox.checked) {
+          labelElement.classList.add('selected');
+        } else {
+          labelElement.classList.remove('selected');
+        }
+      }, 50);
+    }
+
+    function toggleCheckboxQ14(labelElement) {
+      const checkbox = labelElement.querySelector('input[type="checkbox"]');
+      setTimeout(() => {
+        const checkedCount = document.querySelectorAll('input[name="q14_opts"]:checked').length;
+        if (checkedCount > 3) {
+          checkbox.checked = false;
+          labelElement.classList.remove('selected');
+          alert("Bạn chỉ được chọn tối đa 3 nội dung ưu tiên.");
+        } else {
+          if (checkbox.checked) {
+            labelElement.classList.add('selected');
+          } else {
+            labelElement.classList.remove('selected');
+          }
+        }
+      }, 50);
+    }
+
+    // WIZARD NAVIGATION CONTROL
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    function updateProgressBar() {
+      const stepsInfo = [
+        "Bước 1: Thông tin Coachee",
+        "Bước 2: Phần 1 - Tư duy Lãnh đạo & Hiệu suất",
+        "Bước 3: Phần 2 - Tự chủ & Hệ thống quản trị",
+        "Bước 4: Phần 3 - Định hướng & Cam kết",
+        "Bước 5: Hoàn tất đánh giá"
+      ];
+      
+      const percentage = Math.round(((currentStep - 1) / (totalSteps - 1)) * 100);
+      
+      document.getElementById("progress-step-title").innerText = stepsInfo[currentStep - 1];
+      document.getElementById("progress-percentage").innerText = `${percentage}% Hoàn thành`;
+      document.getElementById("progress-bar-fill").style.width = `${percentage}%`;
+    }
+
+    function changeStep(direction) {
+      // Check validation before proceeding
+      if (direction === 1 && !validateCurrentStep()) {
+        alert("Vui lòng điền đầy đủ tất cả thông tin yêu cầu trước khi tiếp tục.");
+        return;
+      }
+
+      // Hide current step
+      document.getElementById(`step-${currentStep}`).classList.remove('active');
+      
+      // Move step
+      currentStep += direction;
+      
+      // Show next step
+      document.getElementById(`step-${currentStep}`).classList.add('active');
+      
+      // Handle page state based on current step
+      if (currentStep === 1) {
+        document.getElementById("btn-prev").disabled = true;
+      } else {
+        document.getElementById("btn-prev").disabled = false;
+      }
+
+      if (currentStep === totalSteps - 1) {
+        document.getElementById("btn-next").innerText = "Nộp bài ✔";
+      } else if (currentStep === totalSteps) {
+        // Hide nav bar entirely
+        document.getElementById("nav-buttons").style.display = "none";
+        document.getElementById("progress-wrapper").style.display = "none";
+        document.getElementById("main-heading").innerText = "Hoàn Tất Đánh Giá";
+        document.getElementById("main-subtitle").innerText = "Cảm ơn bạn đã nộp bài!";
+      } else {
+        document.getElementById("btn-next").innerText = "Tiếp tục →";
+      }
+
+      updateProgressBar();
+      window.scrollTo(0, 0);
+    }
+
+    // FORM VALIDATION FOR STEPPING
+    function validateCurrentStep() {
+      if (currentStep === 1) {
+        const name = document.getElementById("fullName").value;
+        const email = document.getElementById("email").value;
+        const stage = document.getElementById("stage").value;
+        return name && email && stage;
+      }
+      
+      if (currentStep === 2) {
+        // Questions 1 to 6 checked
+        for (let i = 1; i <= 6; i++) {
+          const checked = document.querySelector(`input[name="q_${i}"]:checked`);
+          if (!checked) return false;
+        }
+      }
+      
+      if (currentStep === 3) {
+        // Questions 7 to 12 checked
+        for (let i = 7; i <= 12; i++) {
+          const checked = document.querySelector(`input[name="q_${i}"]:checked`);
+          if (!checked) return false;
+        }
+      }
+
+      if (currentStep === 4) {
+        // Validate Q13-15
+        const q13_checked = document.querySelectorAll(`input[name="q13_opts"]:checked`).length > 0;
+        const q13_reason = document.getElementById("q13_reason").value.trim();
+        const q14_checked = document.querySelectorAll(`input[name="q14_opts"]:checked`).length > 0;
+        const q14_reason = document.getElementById("q14_reason").value.trim();
+        const q15_commitment = document.getElementById("q15_commitment").value.trim();
+        const q15_reason = document.getElementById("q15_reason").value.trim();
+        
+        return q13_checked && q13_reason && q14_checked && q14_reason && q15_commitment && q15_reason;
+      }
+      
+      return true;
+    }
+
+    // RADAR CHART GENERATION (PROTOTYPE FEATURE)
+    let radarChartObj = null;
+
+    function calculateScores() {
+      // Dimensions
+      let scores = { L: 0, P: 0, I: 0, S: 0 };
+      let counts = { L: 0, P: 0, I: 0, S: 0 };
+
+      questions.forEach(q => {
+        const checked = document.querySelector(`input[name="q_${q.id}"]:checked`);
+        if (checked) {
+          scores[q.axis] += parseInt(checked.value);
+          counts[q.axis]++;
+        }
+      });
+
+      // Calculate averages (10 is max)
+      return [
+        (counts.L > 0 ? (scores.L / counts.L) : 0), // L
+        (counts.P > 0 ? (scores.P / counts.P) : 0), // P
+        (counts.I > 0 ? (scores.I / counts.I) : 0), // I
+        (counts.S > 0 ? (scores.S / counts.S) : 0)  // S
+      ];
+    }
+
+    function showMockRadarChart() {
+      const container = document.getElementById("radar-chart-container");
+      container.style.display = "block";
+      document.getElementById("btn-show-chart").style.display = "none";
+      
+      const calculatedData = calculateScores();
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      
+      if (radarChartObj) {
+        radarChartObj.destroy();
+      }
+
+      radarChartObj = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['L (Lãnh đạo)', 'P (Hiệu suất)', 'I (Độc lập)', 'S (Hệ thống)'],
+          datasets: [{
+            label: 'Kết quả đánh giá sơ bộ',
+            data: calculatedData,
+            fill: true,
+            backgroundColor: 'rgba(0, 88, 188, 0.2)',
+            borderColor: '#0058bc',
+            pointBackgroundColor: '#0058bc',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#0058bc'
+          }]
+        },
+        options: {
+          responsive: true,
+          elements: {
+            line: {
+              borderWidth: 3
+            }
+          },
+          scales: {
+            r: {
+              angleLines: {
+                display: true
+              },
+              suggestedMin: 0,
+              suggestedMax: 10,
+              ticks: {
+                stepSize: 2
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // INIT
+    window.onload = function() {
+      renderQuestions();
+      updateProgressBar();
+    }
+  </script>
+</body>
+</html>
