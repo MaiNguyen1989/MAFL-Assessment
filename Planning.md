@@ -102,4 +102,4 @@ Cấu trúc thư mục ưu tiên phân bổ rõ ràng phần Front-end và các 
 - [x] 4. Phát triển giao diện Coach Portal (đăng nhập bảo mật, xem radar chart, chấm sao theo 3 tiêu chí).
 - [x] 5. Khởi tạo mã nguồn dự án Next.js 14+ (App Router, TypeScript) và tích hợp các trang HTML prototype này thành các component React.
 - [ ] 6. Cấu hình dự án Supabase, triển khai migration Database (bảng users, assessments, reviews) và phân quyền RLS để chuẩn bị tích hợp dữ liệu thật.
-- [ ] 7. Thiết lập cấu hình Git repository và triển khai CI/CD tự động deploy lên Vercel.
+- [/] 7. Thiết lập cấu hình Git repository (Đã đẩy code lên GitHub) và triển khai CI/CD tự động deploy lên Vercel.
