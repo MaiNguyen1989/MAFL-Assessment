@@ -29,6 +29,14 @@ function cleanText(str: string): string {
     .replace(/Đ/g, "D");
 }
 
+function getPDFMaturityLevel(score: number) {
+  if (score >= 9.0) return { title: "Giai phong (Bac 5)", desc: "He thong tu van hanh on dinh, doi ngu chu dong dieu chinh va cai tien lien tuc." };
+  if (score >= 7.0) return { title: "Chuan hoa (Bac 4)", desc: "Phat trien doi ngu chu dong, ap dung quy trinh coaching va quan tri dua tren so lieu." };
+  if (score >= 5.0) return { title: "Thuc thi (Bac 3)", desc: "Quy trinh ro rang, giao viec bang muc tieu dau ra va kiem soat tien do dinh ky." };
+  if (score >= 3.0) return { title: "Nhan thuc (Bac 2)", desc: "Da y thuc duoc cac van de cot loi nhung quan tri hanh vi van can giam sat truc tiep." };
+  return { title: "Ban nang (Bac 1)", desc: "Quan ly cong viec theo thoi quen tu than, xu ly su vu phat sinh ngan han." };
+}
+
 export async function POST(request: Request) {
   try {
     const body: RequestBody = await request.json();
@@ -164,6 +172,15 @@ export async function POST(request: Request) {
     doc.text(`- Hieu suat (P): ${scores.P}/10`, 30, 88);
     doc.text(`- Doc lap (I): ${scores.I}/10`, 110, 80);
     doc.text(`- He thong (S): ${scores.S}/10`, 110, 88);
+
+    const avgScore = (scores.L + scores.P + scores.I + scores.S) / 4;
+    const maturity = getPDFMaturityLevel(avgScore);
+
+    doc.text(`- Diem trung binh (LMA): ${avgScore.toFixed(1)}/10`, 30, 96);
+    doc.text(`- Bac truong thanh: ${maturity.title}`, 110, 96);
+    doc.setFontSize(9);
+    doc.setTextColor(86, 100, 117);
+    doc.text(`Mo ta: ${maturity.desc}`, 30, 103);
 
     // Draw Vector Radar Chart
     const cx = 105;

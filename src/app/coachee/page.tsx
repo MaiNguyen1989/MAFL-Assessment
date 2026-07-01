@@ -16,6 +16,76 @@ import {
 // Register Chart.js components
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
+const getMaturityLevel = (score: number) => {
+  if (score >= 9.0) return { title: "Giải phóng", range: "9.0 - 10.0", index: 4, color: "bg-success", text: "text-success", desc: "Hệ thống tự vận hành ổn định, đội ngũ chủ động điều chỉnh và cải tiến liên tục." };
+  if (score >= 7.0) return { title: "Chuẩn hóa", range: "7.0 - 8.9", index: 3, color: "bg-primary", text: "text-primary", desc: "Phát triển đội ngũ chủ động, áp dụng quy trình coaching và quản trị dựa trên số liệu." };
+  if (score >= 5.0) return { title: "Thực thi", range: "5.0 - 6.9", index: 2, color: "bg-[#0284c7]", text: "text-[#0284c7]", desc: "Quy trình rõ ràng, giao việc bằng mục tiêu đầu ra và kiểm soát tiến độ định kỳ." };
+  if (score >= 3.0) return { title: "Nhận thức", range: "3.0 - 4.9", index: 1, color: "bg-warning", text: "text-warning", desc: "Đã ý thức được các vấn đề cốt lõi nhưng quản trị hành vi vẫn cần giám sát trực tiếp." };
+  return { title: "Bản năng", range: "1.0 - 2.9", index: 0, color: "bg-error", text: "text-error", desc: "Quản lý công việc theo thói quen tự thân, xử lý sự vụ phát sinh ngắn hạn." };
+};
+
+const renderMaturityLadder = (avgScore: number) => {
+  const level = getMaturityLevel(avgScore);
+  const steps = [
+    { title: "Bản năng", range: "1.0 - 2.9", color: "bg-error", text: "text-error" },
+    { title: "Nhận thức", range: "3.0 - 4.9", color: "bg-warning", text: "text-warning" },
+    { title: "Thực thi", range: "5.0 - 6.9", color: "bg-[#0284c7]", text: "text-[#0284c7]" },
+    { title: "Chuẩn hóa", range: "7.0 - 8.9", color: "bg-primary", text: "text-primary" },
+    { title: "Giải phóng", range: "9.0 - 10.0", color: "bg-success", text: "text-success" }
+  ];
+
+  return (
+    <div className="w-full p-6 border border-outline-variant bg-surface rounded-2xl shadow-sm text-left flex flex-col gap-4">
+      <div className="flex justify-between items-center pb-2 border-b border-outline-variant">
+        <h3 className="text-sm font-bold text-on-surface uppercase tracking-wider">
+          Mức độ Trưởng thành Lãnh đạo
+        </h3>
+        <span className="text-xs font-bold px-2.5 py-1 bg-surface-container-high border border-outline-variant rounded-lg text-on-surface">
+          Điểm TB: <strong className="text-primary">{avgScore.toFixed(1)}/10</strong>
+        </span>
+      </div>
+
+      <div className="flex flex-col-reverse gap-2 mt-2">
+        {steps.map((step, idx) => {
+          const isActive = level.index === idx;
+          return (
+            <div
+              key={step.title}
+              className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${
+                isActive
+                  ? `border-outline bg-surface-container-low shadow-sm scale-[1.01]`
+                  : "border-transparent opacity-40 hover:opacity-60"
+              }`}
+              style={{
+                marginLeft: `${idx * 12}px`,
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <span className={`w-3 h-3 rounded-full ${step.color}`} />
+                <span className={`text-sm font-bold ${isActive ? step.text : "text-on-surface"}`}>
+                  Bậc {idx + 1}: {step.title}
+                </span>
+                <span className="text-xs text-on-surface-variant font-medium">({step.range})</span>
+              </div>
+              {isActive && (
+                <span className={`text-xs px-2 py-0.5 rounded font-bold text-on-primary ${step.color}`}>
+                  Hiện tại
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="p-3 bg-surface-container-low border-l-4 border-primary rounded-r-lg mt-1">
+        <p className="text-xs text-on-surface-variant leading-relaxed">
+          <strong className="text-on-surface font-semibold">Mô tả hành vi:</strong> {level.desc}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 // 12 LEADERSHIP QUESTIONS DATA
 const questions = [
   {
@@ -805,23 +875,31 @@ export default function CoacheePage() {
             </div>
 
             {showChart && (
-              <div className="w-full max-w-md p-5 border border-outline-variant rounded-2xl bg-surface-container-low text-left">
-                <h3 className="text-sm font-bold mb-4 text-primary text-center">
-                  Biểu Đồ Trắc Nghiệm Sơ Bộ (12 Câu)
-                </h3>
-                
-                <div className="w-[300px] h-[300px] mx-auto">
-                  <Radar data={radarData} options={radarOptions} />
+              <div className="w-full flex flex-col lg:flex-row gap-6 items-stretch justify-center mt-4">
+                <div className="w-full max-w-md p-5 border border-outline-variant rounded-2xl bg-surface-container-low text-left flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold mb-4 text-primary text-center">
+                      Biểu Đồ Trắc Nghiệm Sơ Bộ (12 Câu)
+                    </h3>
+                    
+                    <div className="w-[280px] h-[280px] mx-auto">
+                      <Radar data={radarData} options={radarOptions} />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 text-xs text-on-surface-variant leading-relaxed border-t border-outline-variant pt-3">
+                    <strong>Chú thích 4 trục:</strong>
+                    <ul className="list-disc list-inside mt-2 space-y-1">
+                      <li><strong>L (Leadership):</strong> Tầm nhìn & Phát triển đội ngũ.</li>
+                      <li><strong>P (Performance):</strong> Hiệu suất & KPIs kinh doanh.</li>
+                      <li><strong>I (Independence):</strong> Tự chủ & Ra quyết định độc lập.</li>
+                      <li><strong>S (System):</strong> Hệ thống hóa quy trình quản trị.</li>
+                    </ul>
+                  </div>
                 </div>
 
-                <div className="mt-6 text-xs text-on-surface-variant leading-relaxed">
-                  <strong>Chú thích 4 trục:</strong>
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li><strong>L (Leadership):</strong> Tầm nhìn & Phát triển đội ngũ.</li>
-                    <li><strong>P (Performance):</strong> Hiệu suất & KPIs kinh doanh.</li>
-                    <li><strong>I (Independence):</strong> Tự chủ & Ra quyết định độc lập.</li>
-                    <li><strong>S (System):</strong> Hệ thống hóa quy trình quản trị.</li>
-                  </ul>
+                <div className="flex-grow w-full max-w-md flex flex-col justify-between">
+                  {renderMaturityLadder(scores.reduce((a, b) => a + b, 0) / 4)}
                 </div>
               </div>
             )}

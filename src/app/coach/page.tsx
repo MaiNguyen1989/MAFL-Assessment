@@ -87,6 +87,154 @@ const initialMockData: CoacheeSubmission[] = [
   }
 ];
 
+const getMaturityLevel = (score: number) => {
+  if (score >= 9.0) return { title: "Giải phóng", range: "9.0 - 10.0", index: 4, color: "bg-success", text: "text-success", desc: "Hệ thống tự vận hành ổn định, đội ngũ chủ động điều chỉnh và cải tiến liên tục." };
+  if (score >= 7.0) return { title: "Chuẩn hóa", range: "7.0 - 8.9", index: 3, color: "bg-primary", text: "text-primary", desc: "Phát triển đội ngũ chủ động, áp dụng quy trình coaching và quản trị dựa trên số liệu." };
+  if (score >= 5.0) return { title: "Thực thi", range: "5.0 - 6.9", index: 2, color: "bg-[#0284c7]", text: "text-[#0284c7]", desc: "Quy trình rõ ràng, giao việc bằng mục tiêu đầu ra và kiểm soát tiến độ định kỳ." };
+  if (score >= 3.0) return { title: "Nhận thức", range: "3.0 - 4.9", index: 1, color: "bg-warning", text: "text-warning", desc: "Đã ý thức được các vấn đề cốt lõi nhưng quản trị hành vi vẫn cần giám sát trực tiếp." };
+  return { title: "Bản năng", range: "1.0 - 2.9", index: 0, color: "bg-error", text: "text-error", desc: "Quản lý công việc theo thói quen tự thân, xử lý sự vụ phát sinh ngắn hạn." };
+};
+
+const renderMaturityLadder = (avgScore: number) => {
+  const level = getMaturityLevel(avgScore);
+  const steps = [
+    { title: "Bản năng", range: "1.0 - 2.9", color: "bg-error", text: "text-error" },
+    { title: "Nhận thức", range: "3.0 - 4.9", color: "bg-warning", text: "text-warning" },
+    { title: "Thực thi", range: "5.0 - 6.9", color: "bg-[#0284c7]", text: "text-[#0284c7]" },
+    { title: "Chuẩn hóa", range: "7.0 - 8.9", color: "bg-primary", text: "text-primary" },
+    { title: "Giải phóng", range: "9.0 - 10.0", color: "bg-success", text: "text-success" }
+  ];
+
+  return (
+    <div className="w-full p-6 border border-outline-variant bg-surface rounded-2xl shadow-sm text-left flex flex-col gap-4">
+      <div className="flex justify-between items-center pb-2 border-b border-outline-variant">
+        <h3 className="text-sm font-bold text-on-surface uppercase tracking-wider">
+          Mức độ Trưởng thành Lãnh đạo
+        </h3>
+        <span className="text-xs font-bold px-2.5 py-1 bg-surface-container-high border border-outline-variant rounded-lg text-on-surface">
+          Điểm TB: <strong className="text-primary">{avgScore.toFixed(1)}/10</strong>
+        </span>
+      </div>
+
+      <div className="flex flex-col-reverse gap-2 mt-2">
+        {steps.map((step, idx) => {
+          const isActive = level.index === idx;
+          return (
+            <div
+              key={step.title}
+              className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${
+                isActive
+                  ? `border-outline bg-surface-container-low shadow-sm scale-[1.01]`
+                  : "border-transparent opacity-40 hover:opacity-60"
+              }`}
+              style={{
+                marginLeft: `${idx * 12}px`,
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <span className={`w-3 h-3 rounded-full ${step.color}`} />
+                <span className={`text-sm font-bold ${isActive ? step.text : "text-on-surface"}`}>
+                  Bậc {idx + 1}: {step.title}
+                </span>
+                <span className="text-xs text-on-surface-variant font-medium">({step.range})</span>
+              </div>
+              {isActive && (
+                <span className={`text-xs px-2 py-0.5 rounded font-bold text-on-primary ${step.color}`}>
+                  Hiện tại
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="p-3 bg-surface-container-low border-l-4 border-primary rounded-r-lg mt-1">
+        <p className="text-xs text-on-surface-variant leading-relaxed">
+          <strong className="text-on-surface font-semibold">Mô tả hành vi:</strong> {level.desc}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const renderQualitativeInsights = (q13: number, q14: number, q15: number) => {
+  const getRatingInfo = (type: "q13" | "q14" | "q15", stars: number) => {
+    if (stars === 0) {
+      return { label: "Chờ đánh giá...", desc: "Coach vui lòng chấm sao để xem phân tích hành vi.", pct: 0, color: "bg-surface-dim" };
+    }
+    if (type === "q13") {
+      if (stars === 3) return { label: "Tác động rõ rệt (3★)", desc: "Đã tạo ra kết quả hoặc thay đổi rõ rệt trong đội ngũ.", pct: 100, color: "bg-success" };
+      if (stars === 2) return { label: "Bước đầu áp dụng (2★)", desc: "Đã áp dụng vào thực tế và có thay đổi bước đầu.", pct: 66, color: "bg-[#0284c7]" };
+      return { label: "Nhận biết kiến thức (1★)", desc: "Nhận biết được kiến thức đã học nhưng chưa áp dụng rõ rệt.", pct: 33, color: "bg-warning" };
+    }
+    if (type === "q14") {
+      if (stars === 3) return { label: "Sẵn sàng cao (3★)", desc: "Xác định rõ mục tiêu, nhu cầu hỗ trợ và định hướng phát triển.", pct: 100, color: "bg-success" };
+      if (stars === 2) return { label: "Có ưu tiên rõ (2★)", desc: "Xác định được lĩnh vực cần phát triển.", pct: 66, color: "bg-[#0284c7]" };
+      return { label: "Chưa định hình (1★)", desc: "Chưa xác định rõ ưu tiên phát triển hoặc định hướng Giai đoạn 2.", pct: 33, color: "bg-warning" };
+    }
+    // q15
+    if (stars === 3) return { label: "Cam kết mạnh mẽ (3★)", desc: "Có mục tiêu rõ ràng, hành động cụ thể và tiêu chí đo lường.", pct: 100, color: "bg-success" };
+    if (stars === 2) return { label: "Có hành động rõ (2★)", desc: "Có mục tiêu và hành động cụ thể.", pct: 66, color: "bg-[#0284c7]" };
+    return { label: "Cam kết chung chung (1★)", desc: "Cam kết còn chung chung, thiếu kế hoạch hành động cụ thể.", pct: 33, color: "bg-warning" };
+  };
+
+  const q13Info = getRatingInfo("q13", q13);
+  const q14Info = getRatingInfo("q14", q14);
+  const q15Info = getRatingInfo("q15", q15);
+
+  return (
+    <div className="w-full p-5 border border-outline-variant bg-surface-container-low rounded-2xl flex flex-col gap-4 text-left mb-6">
+      <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider border-b border-outline-variant pb-2">
+        Trực quan hóa Đánh giá chuyên sâu (Insights)
+      </h4>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {/* Q13 */}
+        <div className="p-3 border border-outline-variant bg-surface rounded-xl flex flex-col justify-between min-h-[125px]">
+          <div>
+            <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">
+              Learning Reflection
+            </div>
+            <div className="text-xs font-bold text-on-surface mb-1">{q13Info.label}</div>
+            <p className="text-[10px] text-on-surface-variant leading-relaxed mb-2">{q13Info.desc}</p>
+          </div>
+          <div className="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+            <div className={`h-full rounded-full ${q13Info.color}`} style={{ width: `${q13Info.pct}%` }} />
+          </div>
+        </div>
+
+        {/* Q14 */}
+        <div className="p-3 border border-outline-variant bg-surface rounded-xl flex flex-col justify-between min-h-[125px]">
+          <div>
+            <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">
+              Development Readiness
+            </div>
+            <div className="text-xs font-bold text-on-surface mb-1">{q14Info.label}</div>
+            <p className="text-[10px] text-on-surface-variant leading-relaxed mb-2">{q14Info.desc}</p>
+          </div>
+          <div className="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+            <div className={`h-full rounded-full ${q14Info.color}`} style={{ width: `${q14Info.pct}%` }} />
+          </div>
+        </div>
+
+        {/* Q15 */}
+        <div className="p-3 border border-outline-variant bg-surface rounded-xl flex flex-col justify-between min-h-[125px]">
+          <div>
+            <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">
+              Leadership Commitment
+            </div>
+            <div className="text-xs font-bold text-on-surface mb-1">{q15Info.label}</div>
+            <p className="text-[10px] text-on-surface-variant leading-relaxed mb-2">{q15Info.desc}</p>
+          </div>
+          <div className="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+            <div className={`h-full rounded-full ${q15Info.color}`} style={{ width: `${q15Info.pct}%` }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function CoachPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -579,6 +727,8 @@ export default function CoachPage() {
                     </ul>
                   </div>
                 </div>
+
+                {activeCoachee && renderMaturityLadder((activeCoachee.scores.L + activeCoachee.scores.P + activeCoachee.scores.I + activeCoachee.scores.S) / 4)}
               </div>
 
               {/* Right Column: Q13, Q14, Q15 and Form */}
@@ -587,6 +737,8 @@ export default function CoachPage() {
                   <h3 className="text-lg font-bold text-on-surface mb-6 border-b border-surface-container-high pb-3">
                     Kết quả khảo sát & Đánh giá của Coach
                   </h3>
+
+                  {renderQualitativeInsights(ratings.q13, ratings.q14, ratings.q15)}
 
                   {/* Essay elements Q13-15 */}
                   <div className="flex flex-col gap-6">
