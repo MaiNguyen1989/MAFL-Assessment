@@ -17,7 +17,7 @@
 | **Phát triển Front-end Prototype (Mock data)** | ✅ Đã hoàn thành | **P0** | Đã xây dựng coachee.html & coach.html chạy hoàn chỉnh bằng mock data. |
 | **Thiết lập Database & Bảo mật Supabase RLS** | ✅ Đã hoàn thành | **P1** | Đã tạo SQL migration khởi tạo các bảng và phân quyền RLS bảo mật. |
 | **Tích hợp logic backend & thuật toán tính điểm** | ✅ Đã hoàn thành | **P1** | Đã tích hợp logic tính điểm trung bình và kết nối lưu trữ/truy vấn qua Supabase SDK. |
-| **Tự động hóa kết xuất báo cáo PDF & gửi Email** | ✅ Đã hoàn thành | **P1** | Đã tạo serverless API tự động xuất báo cáo PDF (jsPDF) & tích hợp Resend API. |
+| **Tự động hóa kết xuất báo cáo PDF & gửi Email** | ✅ Đã hoàn thành | **P1** | Đã tạo serverless API tự động xuất báo cáo PDF (jsPDF), tích hợp Resend API & thêm tính năng tải trực tiếp. |
 | **Kiểm thử chất lượng & Tối ưu Responsive** | ❌ Chưa hoàn thành | **P2** | Đảm bảo hiển thị hoàn hảo trên Mobile và tốc độ tải trang < 3s. |
 
 ---
