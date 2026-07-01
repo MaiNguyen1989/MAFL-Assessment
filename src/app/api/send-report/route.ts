@@ -63,35 +63,52 @@ export async function POST(request: Request) {
         ? "Coachee Hung can chu dong sap xep cong viec va coaching cho doi ngu nhieu hon de giai phong thoi gian quản ly."
         : "Coachee Lan da co nhung chuyen bien ro net va ung dung hieu qua cong cu quan tri he thong vao van phong.";
     } else if (isSupabaseConfigured) {
-      // Fetch assessment details from Supabase
-      const { data: assessment, error: assessmentError } = await supabase
-        .from("assessments")
-        .select("*, coach_reviews(*)")
-        .eq("id", assessmentId)
-        .single();
+      try {
+        // Fetch assessment details from Supabase
+        const { data: assessment, error: assessmentError } = await supabase
+          .from("assessments")
+          .select("*, coach_reviews(*)")
+          .eq("id", assessmentId)
+          .single();
 
-      if (assessmentError || !assessment) {
-        throw new Error(assessmentError?.message || "Assessment not found");
+        if (assessmentError || !assessment) {
+          throw new Error(assessmentError?.message || "Assessment not found");
+        }
+
+        coacheeName = assessment.coachee_name;
+        coacheeEmail = assessment.coachee_email;
+        stage = assessment.stage;
+        submittedAt = new Date(assessment.submitted_at).toLocaleString("vi-VN");
+        scores = assessment.scores;
+
+        const review = assessment.coach_reviews && assessment.coach_reviews.length > 0
+          ? assessment.coach_reviews[0]
+          : null;
+
+        if (!review) {
+          throw new Error("Coach review not found for this assessment");
+        }
+
+        q13Stars = review.q13_stars;
+        q14Stars = review.q14_stars;
+        q15Stars = review.q15_stars;
+        feedback = review.feedback;
+      } catch (dbError) {
+        console.warn("Supabase fetch failed in API route, attempting to use backup assessmentData:", dbError);
+        if (assessmentData) {
+          coacheeName = assessmentData.name;
+          coacheeEmail = assessmentData.email;
+          stage = assessmentData.stage;
+          submittedAt = new Date().toLocaleString("vi-VN");
+          scores = assessmentData.scores;
+          q13Stars = assessmentData.review?.q13 || 0;
+          q14Stars = assessmentData.review?.q14 || 0;
+          q15Stars = assessmentData.review?.q15 || 0;
+          feedback = assessmentData.review?.feedback || "";
+        } else {
+          throw dbError; // Re-throw if no backup payload is available
+        }
       }
-
-      coacheeName = assessment.coachee_name;
-      coacheeEmail = assessment.coachee_email;
-      stage = assessment.stage;
-      submittedAt = new Date(assessment.submitted_at).toLocaleString("vi-VN");
-      scores = assessment.scores;
-
-      const review = assessment.coach_reviews && assessment.coach_reviews.length > 0
-        ? assessment.coach_reviews[0]
-        : null;
-
-      if (!review) {
-        throw new Error("Coach review not found for this assessment");
-      }
-
-      q13Stars = review.q13_stars;
-      q14Stars = review.q14_stars;
-      q15Stars = review.q15_stars;
-      feedback = review.feedback;
     } else if (assessmentData) {
       coacheeName = assessmentData.name;
       coacheeEmail = assessmentData.email;
