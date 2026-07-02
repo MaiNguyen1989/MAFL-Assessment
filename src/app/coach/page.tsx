@@ -920,6 +920,16 @@ export default function CoachPage() {
                   </div>
 
                   {/* Rating & General Feedback Form */}
+                  {activeCoachee?.status === "Đã hoàn thành" && !activeCoachee?.review && (
+                    <div className="p-4 bg-error/15 border border-error/20 rounded-xl text-xs text-error leading-relaxed mb-4 text-left">
+                      <strong>⚠️ Lỗi đồng bộ nhận xét (RLS Policy):</strong> Bài đánh giá này đã hoàn thành nhưng trình duyệt không thể tải được nội dung nhận xét của Coach từ bảng <code>coach_reviews</code>.
+                      <br /><br />
+                      Vui lòng truy cập trang quản trị **Supabase SQL Editor** và chạy câu lệnh sau để cấp quyền đọc ghi:
+                      <pre className="mt-2 p-2 bg-surface text-on-surface rounded border border-outline-variant font-mono">
+                        {`CREATE POLICY "Allow public manage reviews" ON public.coach_reviews FOR ALL TO public USING (true) WITH CHECK (true);`}
+                      </pre>
+                    </div>
+                  )}
                   <form onSubmit={handleSubmitReview} className="mt-8 pt-8 border-t-2 border-dashed border-surface-container-highest flex flex-col gap-6">
                     <h4 className="text-base font-bold text-primary">Đánh Giá Sao & Nhận Xét Của Coach</h4>
 
