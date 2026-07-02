@@ -487,6 +487,7 @@ export default function CoachPage() {
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!activeId) return;
     if (ratings.q13 === 0 || ratings.q14 === 0 || ratings.q15 === 0) {
       alert("Vui lòng chấm sao đánh giá đầy đủ cho cả 3 tiêu chí!");
       return;
@@ -496,7 +497,9 @@ export default function CoachPage() {
       return;
     }
 
-    if (isSupabaseConfigured) {
+    const isMock = activeId.startsWith("sub_mock") || activeId.startsWith("sub_test");
+
+    if (isSupabaseConfigured && !isMock) {
       try {
         // 1. Upsert review into coach_reviews
         const { error: reviewError } = await supabase
@@ -537,11 +540,13 @@ export default function CoachPage() {
         await fetchSubmissions();
         setShowSuccessModal(true);
         return;
-      } catch (err) {
-        console.error("Supabase review submission failed, falling back to localStorage:", err);
+      } catch (err: any) {
+        console.error("Supabase review submission failed:", err);
+        alert("Lỗi khi lưu lên Supabase: " + (err.message || JSON.stringify(err)));
+        return;
       }
     } else {
-      console.log("Supabase is not configured, falling back to localStorage.");
+      console.log("Supabase is not configured or mock item, falling back to localStorage.");
     }
 
     const updated = submissions.map((c) => {
