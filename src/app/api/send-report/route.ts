@@ -30,11 +30,29 @@ function cleanText(str: string): string {
 }
 
 function getPDFMaturityLevel(score: number) {
-  if (score >= 9.0) return { title: "Giai phong (Bac 5)", index: 4, desc: "He thong tu van hanh on dinh, doi ngu chu dong dieu chinh va cai tien lien tuc." };
-  if (score >= 7.0) return { title: "Chuan hoa (Bac 4)", index: 3, desc: "Phat trien doi ngu chu dong, ap dung quy trinh coaching va quan tri dua tren so lieu." };
-  if (score >= 5.0) return { title: "Thuc thi (Bac 3)", index: 2, desc: "Quy trinh ro rang, giao viec bang muc tieu dau ra va kiem soat tien do dinh ky." };
-  if (score >= 3.0) return { title: "Nhan thuc (Bac 2)", index: 1, desc: "Da y thuc duoc cac van de cot loi nhung quan tri hanh vi van can giam sat truc tiep." };
-  return { title: "Ban nang (Bac 1)", index: 0, desc: "Quan ly cong viec theo thoi quen tu than, xu ly su vu phat sinh ngan han." };
+  if (score >= 9.0) return { title: "Giải phóng (Bậc 5)", index: 4, desc: "Hệ thống tự vận hành ổn định, đội ngũ chủ động điều chỉnh và cải tiến liên tục." };
+  if (score >= 7.0) return { title: "Chuẩn hóa (Bậc 4)", index: 3, desc: "Phát triển đội ngũ chủ động, áp dụng quy trình coaching và quản trị dựa trên số liệu." };
+  if (score >= 5.0) return { title: "Thực thi (Bậc 3)", index: 2, desc: "Quy trình rõ ràng, giao việc bằng mục tiêu đầu ra và kiểm soát tiến độ định kỳ." };
+  if (score >= 3.0) return { title: "Nhận thức (Bậc 2)", index: 1, desc: "Đã ý thức được các vấn đề cốt lõi nhưng quản trị hành vi vẫn cần giám sát trực tiếp." };
+  return { title: "Bản năng (Bậc 1)", index: 0, desc: "Quản lý công việc theo thói quen tự thân, xử lý sự vụ phát sinh ngắn hạn." };
+}
+
+let cachedRegularFont: string | null = null;
+let cachedBoldFont: string | null = null;
+
+async function getFontBase64(url: string, isBold: boolean) {
+  if (isBold && cachedBoldFont) return cachedBoldFont;
+  if (!isBold && cachedRegularFont) return cachedRegularFont;
+
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Failed to fetch font");
+  const buffer = await response.arrayBuffer();
+  const base64 = Buffer.from(buffer).toString("base64");
+  
+  if (isBold) cachedBoldFont = base64;
+  else cachedRegularFont = base64;
+  
+  return base64;
 }
 
 export async function POST(request: Request) {
@@ -137,53 +155,89 @@ export async function POST(request: Request) {
 
     // 1. Generate PDF Report using jsPDF
     const doc = new jsPDF();
-    doc.setFont("Helvetica");
+    
+    let fontLoaded = false;
+    try {
+      const regBase64 = await getFontBase64("https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/static/Roboto-Regular.ttf", false);
+      const boldBase64 = await getFontBase64("https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/static/Roboto-Bold.ttf", true);
+      
+      doc.addFileToVFS("Roboto-Regular.ttf", regBase64);
+      doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+      
+      doc.addFileToVFS("Roboto-Bold.ttf", boldBase64);
+      doc.addFont("Roboto-Bold.ttf", "Roboto", "bold");
+      
+      doc.setFont("Roboto", "normal");
+      fontLoaded = true;
+    } catch (e) {
+      console.error("Failed to load Roboto fonts, falling back to Helvetica:", e);
+      doc.setFont("Helvetica", "normal");
+    }
+
+    const t = (text: string) => {
+      if (fontLoaded) return text;
+      return text
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D");
+    };
+
+    const setFont = (style: "normal" | "bold") => {
+      doc.setFont(fontLoaded ? "Roboto" : "Helvetica", style);
+    };
 
     // Title Block
+    setFont("bold");
     doc.setFontSize(18);
     doc.setTextColor(0, 88, 188); // #0058bc
     doc.text("LEADERSHIP DEVELOPMENT ASSESSMENT", 105, 20, { align: "center" });
 
-    doc.setFontSize(12);
+    setFont("normal");
+    doc.setFontSize(11);
     doc.setTextColor(86, 100, 117);
-    doc.text("Bao cao danh gia nang luc chuong trinh MAFL", 105, 28, { align: "center" });
+    doc.text(t("Báo cáo đánh giá năng lực chương trình MAFL"), 105, 27, { align: "center" });
 
     doc.setDrawColor(193, 198, 215); // #c1c6d7
-    doc.line(20, 35, 190, 35);
+    doc.line(20, 33, 190, 33);
 
     // Profile Table
-    doc.setFontSize(11);
+    setFont("normal");
+    doc.setFontSize(10.5);
     doc.setTextColor(24, 28, 35);
-    doc.text(`Coachee: ${cleanText(coacheeName)}`, 20, 45);
-    doc.text(`Email: ${coacheeEmail}`, 20, 52);
-    doc.text(`Giai doan: ${cleanText(stage)}`, 130, 45);
-    doc.text(`Ngay nop: ${cleanText(submittedAt)}`, 130, 52);
+    doc.text(t(`Coachee: ${coacheeName}`), 20, 42);
+    doc.text(t(`Email: ${coacheeEmail}`), 20, 49);
+    doc.text(t(`Giai đoạn: ${stage}`), 130, 42);
+    doc.text(t(`Ngày nộp: ${submittedAt}`), 130, 49);
 
-    doc.line(20, 60, 190, 60);
+    doc.line(20, 56, 190, 56);
 
     // Score Table
-    doc.setFontSize(13);
+    setFont("bold");
+    doc.setFontSize(12.5);
     doc.setTextColor(0, 88, 188);
-    doc.text("KET QUA TRAC NGHIEM 4 TRUC (L-P-I-S)", 20, 70);
+    doc.text(t("KẾT QUẢ TRẮC NGHIỆM 4 TRỤC (L-P-I-S)"), 20, 66);
 
-    doc.setFontSize(11);
+    setFont("normal");
+    doc.setFontSize(10.5);
     doc.setTextColor(24, 28, 35);
-    doc.text(`- Lanh dao (L): ${scores.L}/10`, 30, 80);
-    doc.text(`- Hieu suat (P): ${scores.P}/10`, 30, 88);
-    doc.text(`- Doc lap (I): ${scores.I}/10`, 110, 80);
-    doc.text(`- He thong (S): ${scores.S}/10`, 110, 88);
+    doc.text(t(`- Lãnh đạo (L): ${scores.L}/10`), 30, 76);
+    doc.text(t(`- Hiệu suất (P): ${scores.P}/10`), 30, 84);
+    doc.text(t(`- Độc lập (I): ${scores.I}/10`), 110, 76);
+    doc.text(t(`- Hệ thống (S): ${scores.S}/10`), 110, 84);
 
     const avgScore = (scores.L + scores.P + scores.I + scores.S) / 4;
     const maturity = getPDFMaturityLevel(avgScore);
 
     // Section 2: Visual Charts (Radar & Staircase Side-by-Side)
-    doc.setFontSize(13);
+    setFont("bold");
+    doc.setFontSize(12.5);
     doc.setTextColor(0, 88, 188);
-    doc.text("BIEU DO LPIS & MATURITY LEVEL", 20, 100);
+    doc.text(t("BIỂU ĐỒ LPIS & BẬC MATURITY LEVEL LMA"), 20, 96);
 
     // Left side: Radar Chart
     const cx = 68;
-    const cy = 138;
+    const cy = 134;
     const maxR = 30; 
     const scale = maxR / 10; 
 
@@ -203,12 +257,13 @@ export async function POST(request: Request) {
     doc.line(cx - maxR, cy, cx + maxR, cy);
 
     // Radar Labels (Large & Clear)
+    setFont("bold");
     doc.setFontSize(9);
     doc.setTextColor(0, 88, 188);
-    doc.text("L (Lanh dao)", cx, cy - maxR - 3, { align: "center" });
-    doc.text("P (Hieu suat)", cx + maxR + 3, cy + 1);
-    doc.text("I (Doc lap)", cx, cy + maxR + 5, { align: "center" });
-    doc.text("S (He thong)", cx - maxR - 22, cy + 1);
+    doc.text(t("L (Lãnh đạo)"), cx, cy - maxR - 3, { align: "center" });
+    doc.text(t("P (Hiệu suất)"), cx + maxR + 3, cy + 1);
+    doc.text(t("I (Độc lập)"), cx, cy + maxR + 5, { align: "center" });
+    doc.text(t("S (Hệ thống)"), cx - maxR - 22, cy + 1);
 
     // Plot Points and Draw Polygon
     const ptL = { x: cx, y: cy - (scores.L * scale) };
@@ -227,11 +282,11 @@ export async function POST(request: Request) {
     // Right side: Vertical Staircase Ladder
     // Draw 5 steps from y = 110 to 158
     const stairs = [
-      { title: "Ban nang", range: "1.0 - 2.9" },
-      { title: "Nhan thuc", range: "3.0 - 4.9" },
-      { title: "Thuc thi", range: "5.0 - 6.9" },
-      { title: "Chuan hoa", range: "7.0 - 8.9" },
-      { title: "Giai phong", range: "9.0 - 10.0" }
+      { title: "Bản năng", range: "1.0 - 2.9" },
+      { title: "Nhận thức", range: "3.0 - 4.9" },
+      { title: "Thực thi", range: "5.0 - 6.9" },
+      { title: "Chuẩn hóa", range: "7.0 - 8.9" },
+      { title: "Giải phóng", range: "9.0 - 10.0" }
     ];
 
     const startX = 122;
@@ -239,8 +294,8 @@ export async function POST(request: Request) {
     const stepH = 7;
 
     for (let i = 0; i < 5; i++) {
-      const sy = 158 - (i * 12);
-      const stepLabel = `Bac ${i + 1}`;
+      const sy = 154 - (i * 11);
+      const stepLabel = `Bậc ${i + 1}`;
       const isActive = maturity.index === i;
 
       if (isActive) {
@@ -248,47 +303,53 @@ export async function POST(request: Request) {
         doc.setFillColor(0, 88, 188); // #0058bc
         doc.rect(startX, sy, stepW, stepH, "F");
         doc.setTextColor(255, 255, 255);
+        setFont("bold");
         doc.setFontSize(8.5);
-        doc.text(stepLabel, startX + (stepW / 2), sy + 4.8, { align: "center" });
+        doc.text(t(stepLabel), startX + (stepW / 2), sy + 4.8, { align: "center" });
 
         // Active description text (Bold)
         doc.setTextColor(0, 88, 188);
         doc.setFontSize(9);
-        doc.text(`- ${stairs[i].title} (${avgScore.toFixed(1)}/10) <- Hien tai`, startX + stepW + 4, sy + 5);
+        doc.text(t(`- ${stairs[i].title} (${avgScore.toFixed(1)}/10) <- Hiện tại`), startX + stepW + 4, sy + 5);
       } else {
         // Inactive: Light grey border and fill
         doc.setDrawColor(220, 222, 235);
         doc.setFillColor(245, 246, 250);
         doc.rect(startX, sy, stepW, stepH, "FD");
         doc.setTextColor(130, 135, 155);
+        setFont("normal");
         doc.setFontSize(8.5);
-        doc.text(stepLabel, startX + (stepW / 2), sy + 4.8, { align: "center" });
+        doc.text(t(stepLabel), startX + (stepW / 2), sy + 4.8, { align: "center" });
 
         // Inactive description text
         doc.setTextColor(110, 115, 130);
         doc.setFontSize(8.5);
-        doc.text(`- ${stairs[i].title} (${stairs[i].range})`, startX + stepW + 4, sy + 4.8);
+        doc.text(t(`- ${stairs[i].title} (${stairs[i].range})`), startX + stepW + 4, sy + 4.8);
       }
     }
 
     // Divider Line (Separate Visual Section and Review Section)
     doc.setDrawColor(193, 198, 215);
-    doc.line(20, 182, 190, 182);
+    doc.line(20, 178, 190, 178);
 
     // Coach review block
-    doc.setFontSize(13);
+    setFont("bold");
+    doc.setFontSize(12.5);
     doc.setTextColor(0, 88, 188);
-    doc.text("NHAN XET & DANH GIA CUA COACH", 20, 191);
+    doc.text(t("NHẬN XÉT & ĐÁNH GIÁ CỦA COACH"), 20, 187);
 
-    doc.setFontSize(11);
+    setFont("normal");
+    doc.setFontSize(10.5);
     doc.setTextColor(24, 28, 35);
-    doc.text(`- Phan hoi hoc tap (Q13): ${q13Stars}/3 sao`, 20, 203);
-    doc.text(`- Muc do san sang (Q14): ${q14Stars}/3 sao`, 20, 210);
-    doc.text(`- Muc do cam ket (Q15): ${q15Stars}/3 sao`, 20, 217);
+    doc.text(t(`- Phản hồi học tập (Q13): ${q13Stars}/3 sao`), 20, 197);
+    doc.text(t(`- Mức độ sẵn sàng (Q14): ${q14Stars}/3 sao`), 20, 204);
+    doc.text(t(`- Mức độ cam kết (Q15): ${q15Stars}/3 sao`), 20, 211);
 
-    doc.text("Nhan xet chung cua Coach:", 20, 227);
-    const splitFeedback = doc.splitTextToSize(cleanText(feedback), 170);
-    doc.text(splitFeedback, 20, 234);
+    setFont("bold");
+    doc.text(t("Nhận xét chung của Coach:"), 20, 221);
+    setFont("normal");
+    const splitFeedback = doc.splitTextToSize(t(feedback), 170);
+    doc.text(splitFeedback, 20, 228);
 
     // If request is only for downloading the PDF, return it immediately
     if (download) {
