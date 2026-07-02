@@ -400,14 +400,25 @@ export default function CoachPage() {
             status: item.status,
             scores: item.scores,
             answers: item.answers,
-            review: item.coach_reviews && item.coach_reviews.length > 0 
-              ? {
-                  q13: item.coach_reviews[0].q13_stars,
-                  q14: item.coach_reviews[0].q14_stars,
-                  q15: item.coach_reviews[0].q15_stars,
-                  feedback: item.coach_reviews[0].feedback,
-                }
-              : null
+            review: (() => {
+              if (!item.coach_reviews) return null;
+              if (Array.isArray(item.coach_reviews)) {
+                if (item.coach_reviews.length === 0) return null;
+                const r = item.coach_reviews[0];
+                return {
+                  q13: r.q13_stars,
+                  q14: r.q14_stars,
+                  q15: r.q15_stars,
+                  feedback: r.feedback
+                };
+              }
+              return {
+                q13: item.coach_reviews.q13_stars,
+                q14: item.coach_reviews.q14_stars,
+                q15: item.coach_reviews.q15_stars,
+                feedback: item.coach_reviews.feedback
+              };
+            })()
           }));
           setSubmissions(formatted);
           return;
