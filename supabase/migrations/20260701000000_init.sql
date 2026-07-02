@@ -49,6 +49,13 @@ TO public
 USING (true)
 WITH CHECK (true);
 
+-- 4. Anyone can delete assessments
+CREATE POLICY "Allow public delete" 
+ON public.assessments 
+FOR DELETE 
+TO public 
+USING (true);
+
 -- Policies for coach_reviews table
 -- 1. Anyone can perform actions (CRUD) on reviews
 CREATE POLICY "Allow public manage reviews" 

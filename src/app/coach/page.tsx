@@ -498,16 +498,16 @@ export default function CoachPage() {
 
     if (isSupabaseConfigured) {
       try {
-        // 1. Insert review into coach_reviews
+        // 1. Upsert review into coach_reviews
         const { error: reviewError } = await supabase
           .from("coach_reviews")
-          .insert({
+          .upsert({
             assessment_id: activeId,
             q13_stars: ratings.q13,
             q14_stars: ratings.q14,
             q15_stars: ratings.q15,
             feedback: feedback.trim()
-          });
+          }, { onConflict: "assessment_id" });
 
         if (reviewError) throw reviewError;
 
