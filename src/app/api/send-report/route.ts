@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { jsPDF } from "jspdf";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import fs from "fs";
+import path from "path";
 
 interface RequestBody {
   assessmentId: string;
@@ -37,22 +39,10 @@ function getPDFMaturityLevel(score: number) {
   return { title: "Bản năng (Bậc 1)", index: 0, desc: "Quản lý công việc theo thói quen tự thân, xử lý sự vụ phát sinh ngắn hạn." };
 }
 
-let cachedRegularFont: string | null = null;
-let cachedBoldFont: string | null = null;
-
-async function getFontBase64(url: string, isBold: boolean) {
-  if (isBold && cachedBoldFont) return cachedBoldFont;
-  if (!isBold && cachedRegularFont) return cachedRegularFont;
-
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Failed to fetch font");
-  const buffer = await response.arrayBuffer();
-  const base64 = Buffer.from(buffer).toString("base64");
-  
-  if (isBold) cachedBoldFont = base64;
-  else cachedRegularFont = base64;
-  
-  return base64;
+function getLocalFontBase64(filename: string): string {
+  const filePath = path.join(process.cwd(), "public", "fonts", filename);
+  const fileBuffer = fs.readFileSync(filePath);
+  return fileBuffer.toString("base64");
 }
 
 export async function POST(request: Request) {
@@ -158,8 +148,8 @@ export async function POST(request: Request) {
     
     let fontLoaded = false;
     try {
-      const regBase64 = await getFontBase64("https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/static/Roboto-Regular.ttf", false);
-      const boldBase64 = await getFontBase64("https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/static/Roboto-Bold.ttf", true);
+      const regBase64 = getLocalFontBase64("Roboto-Regular.ttf");
+      const boldBase64 = getLocalFontBase64("Roboto-Bold.ttf");
       
       doc.addFileToVFS("Roboto-Regular.ttf", regBase64);
       doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
@@ -170,7 +160,7 @@ export async function POST(request: Request) {
       doc.setFont("Roboto", "normal");
       fontLoaded = true;
     } catch (e) {
-      console.error("Failed to load Roboto fonts, falling back to Helvetica:", e);
+      console.error("Failed to load local Roboto fonts, falling back to Helvetica:", e);
       doc.setFont("Helvetica", "normal");
     }
 
