@@ -176,15 +176,14 @@ export async function POST(request: Request) {
     const avgScore = (scores.L + scores.P + scores.I + scores.S) / 4;
     const maturity = getPDFMaturityLevel(avgScore);
 
-    doc.text(`- Diem trung binh (LMA): ${avgScore.toFixed(1)}/10`, 30, 96);
-    doc.text(`- Bac truong thanh: ${maturity.title}`, 110, 96);
-    doc.setFontSize(9);
-    doc.setTextColor(86, 100, 117);
-    doc.text(`Mo ta: ${maturity.desc}`, 30, 103);
+    // Section 2: Visual Charts (Radar & Staircase Side-by-Side)
+    doc.setFontSize(13);
+    doc.setTextColor(0, 88, 188);
+    doc.text("BIEU DO LPIS & MATURITY LEVEL", 20, 100);
 
-    // Draw Vector Radar Chart
-    const cx = 105;
-    const cy = 135;
+    // Left side: Radar Chart
+    const cx = 68;
+    const cy = 138;
     const maxR = 30; 
     const scale = maxR / 10; 
 
@@ -203,13 +202,13 @@ export async function POST(request: Request) {
     doc.line(cx, cy - maxR, cx, cy + maxR);
     doc.line(cx - maxR, cy, cx + maxR, cy);
 
-    // Labels
+    // Radar Labels (Large & Clear)
     doc.setFontSize(9);
-    doc.setTextColor(86, 100, 117);
-    doc.text("L", cx, cy - maxR - 2, { align: "center" });
-    doc.text("P", cx + maxR + 3, cy + 1);
-    doc.text("I", cx, cy + maxR + 4, { align: "center" });
-    doc.text("S", cx - maxR - 5, cy + 1);
+    doc.setTextColor(0, 88, 188);
+    doc.text("L (Lanh dao)", cx, cy - maxR - 3, { align: "center" });
+    doc.text("P (Hieu suat)", cx + maxR + 3, cy + 1);
+    doc.text("I (Doc lap)", cx, cy + maxR + 5, { align: "center" });
+    doc.text("S (He thong)", cx - maxR - 22, cy + 1);
 
     // Plot Points and Draw Polygon
     const ptL = { x: cx, y: cy - (scores.L * scale) };
@@ -225,59 +224,71 @@ export async function POST(request: Request) {
     doc.line(ptS.x, ptS.y, ptL.x, ptL.y);
     doc.setLineWidth(0.2); 
 
-    // Draw LMA staircase (stairs)
-    // 5 steps rising from left to right
-    const startX = 58;
-    const startY = 185;
-    const stepW = 16;
-    const stepH = 3;
-    
-    doc.setFontSize(8);
+    // Right side: Vertical Staircase Ladder
+    // Draw 5 steps from y = 110 to 158
+    const stairs = [
+      { title: "Ban nang", range: "1.0 - 2.9" },
+      { title: "Nhan thuc", range: "3.0 - 4.9" },
+      { title: "Thuc thi", range: "5.0 - 6.9" },
+      { title: "Chuan hoa", range: "7.0 - 8.9" },
+      { title: "Giai phong", range: "9.0 - 10.0" }
+    ];
+
+    const startX = 122;
+    const stepW = 18;
+    const stepH = 7;
+
     for (let i = 0; i < 5; i++) {
-      const sx = startX + (i * (stepW + 2));
-      const sy = startY - (i * (stepH + 1));
-      const stepLabel = (i + 1).toString();
+      const sy = 158 - (i * 12);
+      const stepLabel = `Bac ${i + 1}`;
       const isActive = maturity.index === i;
-      
+
       if (isActive) {
-        // Highlight active step
+        // Active: Solid blue fill and white text for step label block
         doc.setFillColor(0, 88, 188); // #0058bc
-        doc.rect(sx, sy, stepW, stepH, "F");
+        doc.rect(startX, sy, stepW, stepH, "F");
         doc.setTextColor(255, 255, 255);
-        doc.text(stepLabel, sx + (stepW / 2), sy + 2.2, { align: "center" });
-        
-        // Active indicator text above
+        doc.setFontSize(8.5);
+        doc.text(stepLabel, startX + (stepW / 2), sy + 4.8, { align: "center" });
+
+        // Active description text (Bold)
         doc.setTextColor(0, 88, 188);
-        doc.setFontSize(7.5);
-        doc.text(cleanText(maturity.title).split(" ")[0], sx + (stepW / 2), sy - 1.5, { align: "center" });
+        doc.setFontSize(9);
+        doc.text(`- ${stairs[i].title} (${avgScore.toFixed(1)}/10) <- Hien tai`, startX + stepW + 4, sy + 5);
       } else {
-        // Light outline for inactive steps
+        // Inactive: Light grey border and fill
         doc.setDrawColor(220, 222, 235);
         doc.setFillColor(245, 246, 250);
-        doc.rect(sx, sy, stepW, stepH, "FD");
-        doc.setTextColor(150, 155, 175);
-        doc.setFontSize(8);
-        doc.text(stepLabel, sx + (stepW / 2), sy + 2.2, { align: "center" });
+        doc.rect(startX, sy, stepW, stepH, "FD");
+        doc.setTextColor(130, 135, 155);
+        doc.setFontSize(8.5);
+        doc.text(stepLabel, startX + (stepW / 2), sy + 4.8, { align: "center" });
+
+        // Inactive description text
+        doc.setTextColor(110, 115, 130);
+        doc.setFontSize(8.5);
+        doc.text(`- ${stairs[i].title} (${stairs[i].range})`, startX + stepW + 4, sy + 4.8);
       }
     }
 
-    // Footer divider
-    doc.line(20, 192, 190, 192);
+    // Divider Line (Separate Visual Section and Review Section)
+    doc.setDrawColor(193, 198, 215);
+    doc.line(20, 182, 190, 182);
 
     // Coach review block
     doc.setFontSize(13);
     doc.setTextColor(0, 88, 188);
-    doc.text("NHAN XET & DANH GIA CUA COACH", 20, 201);
+    doc.text("NHAN XET & DANH GIA CUA COACH", 20, 191);
 
     doc.setFontSize(11);
     doc.setTextColor(24, 28, 35);
-    doc.text(`- Phan hoi hoc tap (Q13): ${q13Stars}/3 sao`, 20, 213);
-    doc.text(`- Muc do san sang (Q14): ${q14Stars}/3 sao`, 20, 220);
-    doc.text(`- Muc do cam ket (Q15): ${q15Stars}/3 sao`, 20, 227);
+    doc.text(`- Phan hoi hoc tap (Q13): ${q13Stars}/3 sao`, 20, 203);
+    doc.text(`- Muc do san sang (Q14): ${q14Stars}/3 sao`, 20, 210);
+    doc.text(`- Muc do cam ket (Q15): ${q15Stars}/3 sao`, 20, 217);
 
-    doc.text("Nhan xet chung cua Coach:", 20, 237);
+    doc.text("Nhan xet chung cua Coach:", 20, 227);
     const splitFeedback = doc.splitTextToSize(cleanText(feedback), 170);
-    doc.text(splitFeedback, 20, 244);
+    doc.text(splitFeedback, 20, 234);
 
     // If request is only for downloading the PDF, return it immediately
     if (download) {

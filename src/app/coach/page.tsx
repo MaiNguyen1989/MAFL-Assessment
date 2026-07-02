@@ -444,8 +444,6 @@ export default function CoachPage() {
   };
 
   const handleSetStars = (target: "q13" | "q14" | "q15", count: number) => {
-    const coachee = submissions.find((c) => c.id === activeId);
-    if (coachee?.status === "Đã hoàn thành") return; // Read-only if completed
     setRatings((prev) => ({ ...prev, [target]: count }));
   };
 
@@ -634,10 +632,6 @@ export default function CoachPage() {
                 Mật khẩu không chính xác. Vui lòng thử lại.
               </div>
             )}
-          </div>
-          
-          <div className="text-xs text-on-surface-variant">
-            Mật khẩu mô phỏng: <strong className="text-primary">coach123</strong>
           </div>
         </div>
       </div>
@@ -887,7 +881,6 @@ export default function CoachPage() {
                             className={`text-3xl transition-transform hover:scale-115 ${
                               ratings.q13 >= num ? "text-warning" : "text-surface-dim"
                             }`}
-                            disabled={activeCoachee?.status === "Đã hoàn thành"}
                           >
                             ★
                           </button>
@@ -915,7 +908,6 @@ export default function CoachPage() {
                             className={`text-3xl transition-transform hover:scale-115 ${
                               ratings.q14 >= num ? "text-warning" : "text-surface-dim"
                             }`}
-                            disabled={activeCoachee?.status === "Đã hoàn thành"}
                           >
                             ★
                           </button>
@@ -943,7 +935,6 @@ export default function CoachPage() {
                             className={`text-3xl transition-transform hover:scale-115 ${
                               ratings.q15 >= num ? "text-warning" : "text-surface-dim"
                             }`}
-                            disabled={activeCoachee?.status === "Đã hoàn thành"}
                           >
                             ★
                           </button>
@@ -961,10 +952,9 @@ export default function CoachPage() {
                       </label>
                       <textarea
                         placeholder="Viết lời khuyên chi tiết giúp coachee cải thiện tư duy & hệ thống quản trị của mình..."
-                        className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface text-on-surface focus:border-primary focus:ring-3 focus:ring-primary/15 transition-all outline-none min-h-[120px] disabled:opacity-75 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border border-outline-variant rounded-lg bg-surface text-on-surface focus:border-primary focus:ring-3 focus:ring-primary/15 transition-all outline-none min-h-[120px]"
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
-                        disabled={activeCoachee?.status === "Đã hoàn thành"}
                         required
                       />
                     </div>
@@ -977,23 +967,22 @@ export default function CoachPage() {
                       >
                         Hủy bỏ
                       </button>
-                      {activeCoachee?.status === "Đã hoàn thành" ? (
-                        <button
-                          type="button"
-                          onClick={() => handleDownloadPDF(activeCoachee.id, activeCoachee.name)}
-                          className="px-5 py-2.5 bg-success text-on-primary font-semibold rounded-lg text-sm hover:bg-success/90 shadow-md shadow-success/15 transition-all disabled:opacity-50"
-                          disabled={isDownloading}
-                        >
-                          {isDownloading ? "Đang tải..." : "📥 Tải báo cáo PDF"}
-                        </button>
-                      ) : (
+                        {activeCoachee?.status === "Đã hoàn thành" && (
+                          <button
+                            type="button"
+                            onClick={() => handleDownloadPDF(activeCoachee.id, activeCoachee.name)}
+                            className="px-5 py-2.5 bg-success text-on-primary font-semibold rounded-lg text-sm hover:bg-success/90 shadow-md shadow-success/15 transition-all disabled:opacity-50"
+                            disabled={isDownloading}
+                          >
+                            {isDownloading ? "Đang tải..." : "📥 Tải báo cáo PDF"}
+                          </button>
+                        )}
                         <button
                           type="submit"
                           className="px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-lg text-sm hover:bg-primary-hover shadow-md shadow-primary/15 transition-all"
                         >
-                          Hoàn thành đánh giá
+                          {activeCoachee?.status === "Đã hoàn thành" ? "Cập nhật nhận xét" : "Hoàn thành đánh giá"}
                         </button>
-                      )}
                     </div>
                   </form>
                 </div>
