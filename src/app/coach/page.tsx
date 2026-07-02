@@ -249,6 +249,64 @@ export default function CoachPage() {
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isCreatingTest, setIsCreatingTest] = useState(false);
+
+  const handleCreateTestCoachee = async () => {
+    setIsCreatingTest(true);
+    const testId = "sub_test_" + Date.now();
+    const testCoachee = {
+      coachee_name: "Hoc vien Thu nghiem " + Math.floor(Math.random() * 100),
+      coachee_email: "test.student@insurance.com",
+      stage: "Giai đoạn 1",
+      status: "Chờ nhận xét",
+      scores: { L: 6.5, P: 5.0, I: 7.0, S: 5.5 },
+      answers: {
+        q1_q12: { 1: 6, 2: 6, 3: 6, 4: 6, 5: 6, 6: 6, 7: 6, 8: 6, 9: 6, 10: 6, 11: 6, 12: 6 },
+        q13_opts: ["Thay đổi tư duy vai trò người lãnh đạo"],
+        q13_reason: "Mong muốn học hỏi cách phân quyền tốt hơn.",
+        q14_opts: ["Nâng cao năng lực Coaching"],
+        q14_reason: "Cần cải thiện kỹ năng coaching cho cấp dưới.",
+        q15_commitment: "Cam kết họp nhóm định kỳ.",
+        q15_reason: "Để nâng cao tính liên kết."
+      }
+    };
+
+    if (isSupabaseConfigured) {
+      try {
+        const { error } = await supabase
+          .from("assessments")
+          .insert(testCoachee);
+        if (error) throw error;
+        await fetchSubmissions();
+        alert("Đã tạo coachee thử nghiệm online thành công!");
+      } catch (err) {
+        console.error("Failed to insert test coachee online:", err);
+        alert("Lỗi khi tạo online, chuyển sang tạo offline local.");
+        saveTestCoacheeLocal(testId, testCoachee);
+      }
+    } else {
+      saveTestCoacheeLocal(testId, testCoachee);
+    }
+    setIsCreatingTest(false);
+  };
+
+  const saveTestCoacheeLocal = (id: string, data: any) => {
+    const localItem = {
+      id: id,
+      name: data.coachee_name,
+      email: data.coachee_email,
+      stage: data.stage,
+      submittedAt: new Date().toLocaleString("vi-VN"),
+      status: data.status,
+      scores: data.scores,
+      answers: data.answers,
+      review: null
+    };
+    const updated = [localItem, ...submissions];
+    setSubmissions(updated);
+    localStorage.setItem("lda_assessments", JSON.stringify(updated));
+    alert("Đã tạo coachee thử nghiệm offline (localStorage) thành công!");
+  };
 
   const handleDownloadPDF = async (id: string, name: string) => {
     setIsDownloading(true);
@@ -615,11 +673,20 @@ export default function CoachPage() {
         {/* DASHBOARD VIEW */}
         {!activeId ? (
           <div className="flex flex-col gap-6 animate-fadeIn">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap gap-4">
               <h2 className="text-2xl font-bold text-on-surface">Danh sách Đánh Giá Coachee</h2>
-              <span className="text-sm font-semibold text-on-surface-variant">
-                Tổng cộng: <strong className="text-primary">{submissions.length}</strong> coachee
-              </span>
+              <div className="flex gap-4 items-center">
+                <button
+                  onClick={handleCreateTestCoachee}
+                  disabled={isCreatingTest}
+                  className="px-4 py-2 bg-primary text-on-primary font-semibold rounded-lg text-xs hover:bg-primary-hover shadow-md shadow-primary/10 transition-all flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  {isCreatingTest ? "Đang tạo..." : "➕ Tạo Coachee mẫu để test"}
+                </button>
+                <span className="text-sm font-semibold text-on-surface-variant flex items-center">
+                  Tổng cộng: <strong className="text-primary ml-1 mr-1">{submissions.length}</strong> coachee
+                </span>
+              </div>
             </div>
 
             <div className="border bg-surface border-outline-variant rounded-xl overflow-hidden shadow-sm overflow-x-auto">

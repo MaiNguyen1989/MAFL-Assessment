@@ -30,11 +30,11 @@ function cleanText(str: string): string {
 }
 
 function getPDFMaturityLevel(score: number) {
-  if (score >= 9.0) return { title: "Giai phong (Bac 5)", desc: "He thong tu van hanh on dinh, doi ngu chu dong dieu chinh va cai tien lien tuc." };
-  if (score >= 7.0) return { title: "Chuan hoa (Bac 4)", desc: "Phat trien doi ngu chu dong, ap dung quy trinh coaching va quan tri dua tren so lieu." };
-  if (score >= 5.0) return { title: "Thuc thi (Bac 3)", desc: "Quy trinh ro rang, giao viec bang muc tieu dau ra va kiem soat tien do dinh ky." };
-  if (score >= 3.0) return { title: "Nhan thuc (Bac 2)", desc: "Da y thuc duoc cac van de cot loi nhung quan tri hanh vi van can giam sat truc tiep." };
-  return { title: "Ban nang (Bac 1)", desc: "Quan ly cong viec theo thoi quen tu than, xu ly su vu phat sinh ngan han." };
+  if (score >= 9.0) return { title: "Giai phong (Bac 5)", index: 4, desc: "He thong tu van hanh on dinh, doi ngu chu dong dieu chinh va cai tien lien tuc." };
+  if (score >= 7.0) return { title: "Chuan hoa (Bac 4)", index: 3, desc: "Phat trien doi ngu chu dong, ap dung quy trinh coaching va quan tri dua tren so lieu." };
+  if (score >= 5.0) return { title: "Thuc thi (Bac 3)", index: 2, desc: "Quy trinh ro rang, giao viec bang muc tieu dau ra va kiem soat tien do dinh ky." };
+  if (score >= 3.0) return { title: "Nhan thuc (Bac 2)", index: 1, desc: "Da y thuc duoc cac van de cot loi nhung quan tri hanh vi van can giam sat truc tiep." };
+  return { title: "Ban nang (Bac 1)", index: 0, desc: "Quan ly cong viec theo thoi quen tu than, xu ly su vu phat sinh ngan han." };
 }
 
 export async function POST(request: Request) {
@@ -225,23 +225,59 @@ export async function POST(request: Request) {
     doc.line(ptS.x, ptS.y, ptL.x, ptL.y);
     doc.setLineWidth(0.2); 
 
+    // Draw LMA staircase (stairs)
+    // 5 steps rising from left to right
+    const startX = 58;
+    const startY = 185;
+    const stepW = 16;
+    const stepH = 3;
+    
+    doc.setFontSize(8);
+    for (let i = 0; i < 5; i++) {
+      const sx = startX + (i * (stepW + 2));
+      const sy = startY - (i * (stepH + 1));
+      const stepLabel = (i + 1).toString();
+      const isActive = maturity.index === i;
+      
+      if (isActive) {
+        // Highlight active step
+        doc.setFillColor(0, 88, 188); // #0058bc
+        doc.rect(sx, sy, stepW, stepH, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.text(stepLabel, sx + (stepW / 2), sy + 2.2, { align: "center" });
+        
+        // Active indicator text above
+        doc.setTextColor(0, 88, 188);
+        doc.setFontSize(7.5);
+        doc.text(cleanText(maturity.title).split(" ")[0], sx + (stepW / 2), sy - 1.5, { align: "center" });
+      } else {
+        // Light outline for inactive steps
+        doc.setDrawColor(220, 222, 235);
+        doc.setFillColor(245, 246, 250);
+        doc.rect(sx, sy, stepW, stepH, "FD");
+        doc.setTextColor(150, 155, 175);
+        doc.setFontSize(8);
+        doc.text(stepLabel, sx + (stepW / 2), sy + 2.2, { align: "center" });
+      }
+    }
+
     // Footer divider
-    doc.line(20, 180, 190, 180);
+    doc.line(20, 192, 190, 192);
 
     // Coach review block
     doc.setFontSize(13);
     doc.setTextColor(0, 88, 188);
-    doc.text("NHAN XET & DANH GIA CUA COACH", 20, 190);
+    doc.text("NHAN XET & DANH GIA CUA COACH", 20, 201);
 
     doc.setFontSize(11);
     doc.setTextColor(24, 28, 35);
-    doc.text(`- Phan hoi hoc tap (Q13): ${q13Stars}/3 sao`, 20, 202);
-    doc.text(`- Muc do san sang (Q14): ${q14Stars}/3 sao`, 20, 209);
-    doc.text(`- Muc do cam ket (Q15): ${q15Stars}/3 sao`, 20, 216);
+    doc.text(`- Phan hoi hoc tap (Q13): ${q13Stars}/3 sao`, 20, 213);
+    doc.text(`- Muc do san sang (Q14): ${q14Stars}/3 sao`, 20, 220);
+    doc.text(`- Muc do cam ket (Q15): ${q15Stars}/3 sao`, 20, 227);
 
-    doc.text("Nhan xet chung cua Coach:", 20, 226);
+    doc.text("Nhan xet chung cua Coach:", 20, 237);
     const splitFeedback = doc.splitTextToSize(cleanText(feedback), 170);
-    doc.text(splitFeedback, 20, 233);
+    doc.text(splitFeedback, 20, 244);
 
     // If request is only for downloading the PDF, return it immediately
     if (download) {
