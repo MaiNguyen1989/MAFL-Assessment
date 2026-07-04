@@ -331,9 +331,9 @@ export async function POST(request: Request) {
     setFont("normal");
     doc.setFontSize(10.5);
     doc.setTextColor(24, 28, 35);
-    doc.text(t(`- Phản hồi học tập (Q13): ${q13Stars}/3 sao`), 20, 197);
-    doc.text(t(`- Mức độ sẵn sàng (Q14): ${q14Stars}/3 sao`), 20, 204);
-    doc.text(t(`- Mức độ cam kết (Q15): ${q15Stars}/3 sao`), 20, 211);
+    doc.text(t(`- Phản hồi học tập (Q13): ${q13Stars}/5 sao`), 20, 197);
+    doc.text(t(`- Mức độ sẵn sàng (Q14): ${q14Stars}/5 sao`), 20, 204);
+    doc.text(t(`- Mức độ cam kết (Q15): ${q15Stars}/5 sao`), 20, 211);
 
     setFont("bold");
     doc.text(t("Nhận xét chung của Coach:"), 20, 221);

@@ -163,19 +163,25 @@ const renderQualitativeInsights = (q13: number, q14: number, q15: number) => {
       return { label: "Chờ đánh giá...", desc: "Coach vui lòng chấm sao để xem phân tích hành vi.", pct: 0, color: "bg-surface-dim" };
     }
     if (type === "q13") {
-      if (stars === 3) return { label: "Tác động rõ rệt (3★)", desc: "Đã tạo ra kết quả hoặc thay đổi rõ rệt trong đội ngũ.", pct: 100, color: "bg-success" };
-      if (stars === 2) return { label: "Bước đầu áp dụng (2★)", desc: "Đã áp dụng vào thực tế và có thay đổi bước đầu.", pct: 66, color: "bg-[#0284c7]" };
-      return { label: "Nhận biết kiến thức (1★)", desc: "Nhận biết được kiến thức đã học nhưng chưa áp dụng rõ rệt.", pct: 33, color: "bg-warning" };
+      if (stars === 5) return { label: "Tác động rõ rệt (5★)", desc: "Đã tạo ra kết quả hoặc thay đổi rõ rệt, sâu rộng trong đội ngũ.", pct: 100, color: "bg-success" };
+      if (stars === 4) return { label: "Áp dụng thường xuyên (4★)", desc: "Áp dụng thường xuyên vào công việc và bước đầu tạo ra thay đổi tích cực.", pct: 80, color: "bg-success" };
+      if (stars === 3) return { label: "Bước đầu áp dụng (3★)", desc: "Đã áp dụng vào thực tế ở mức cơ bản hoặc trong một số tình huống cụ thể.", pct: 60, color: "bg-[#0284c7]" };
+      if (stars === 2) return { label: "Hiểu & có ý định (2★)", desc: "Hiểu rõ kiến thức và có ý định áp dụng nhưng chưa bắt đầu thực hiện.", pct: 40, color: "bg-warning" };
+      return { label: "Nhận biết kiến thức (1★)", desc: "Mới dừng lại ở mức nhận biết cơ bản, chưa áp dụng vào thực tế.", pct: 20, color: "bg-error" };
     }
     if (type === "q14") {
-      if (stars === 3) return { label: "Sẵn sàng cao (3★)", desc: "Xác định rõ mục tiêu, nhu cầu hỗ trợ và định hướng phát triển.", pct: 100, color: "bg-success" };
-      if (stars === 2) return { label: "Có ưu tiên rõ (2★)", desc: "Xác định được lĩnh vực cần phát triển.", pct: 66, color: "bg-[#0284c7]" };
-      return { label: "Chưa định hình (1★)", desc: "Chưa xác định rõ ưu tiên phát triển hoặc định hướng Giai đoạn 2.", pct: 33, color: "bg-warning" };
+      if (stars === 5) return { label: "Sẵn sàng cao (5★)", desc: "Định hướng cực kỳ rõ ràng, chủ động và sẵn sàng cao cho giai đoạn tiếp theo.", pct: 100, color: "bg-success" };
+      if (stars === 4) return { label: "Xác định rõ (4★)", desc: "Xác định rõ mục tiêu, nhu cầu hỗ trợ và định hướng giai đoạn tiếp theo.", pct: 80, color: "bg-success" };
+      if (stars === 3) return { label: "Có ưu tiên rõ (3★)", desc: "Xác định được lĩnh vực cần phát triển chính.", pct: 60, color: "bg-[#0284c7]" };
+      if (stars === 2) return { label: "Định hình sơ bộ (2★)", desc: "Định hình sơ bộ lĩnh vực cần học hỏi thêm.", pct: 40, color: "bg-warning" };
+      return { label: "Chưa định hình (1★)", desc: "Chưa xác định rõ ưu tiên phát triển hoặc định hướng giai đoạn tiếp theo.", pct: 20, color: "bg-error" };
     }
     // q15
-    if (stars === 3) return { label: "Cam kết mạnh mẽ (3★)", desc: "Có mục tiêu rõ ràng, hành động cụ thể và tiêu chí đo lường.", pct: 100, color: "bg-success" };
-    if (stars === 2) return { label: "Có hành động rõ (2★)", desc: "Có mục tiêu và hành động cụ thể.", pct: 66, color: "bg-[#0284c7]" };
-    return { label: "Cam kết chung chung (1★)", desc: "Cam kết còn chung chung, thiếu kế hoạch hành động cụ thể.", pct: 33, color: "bg-warning" };
+    if (stars === 5) return { label: "Cam kết mạnh mẽ (5★)", desc: "Cam kết mạnh mẽ, có hành động cụ thể và tiêu chí đo lường rõ ràng.", pct: 100, color: "bg-success" };
+    if (stars === 4) return { label: "Có kế hoạch rõ (4★)", desc: "Có mục tiêu rõ ràng và kế hoạch hành động cụ thể để cải thiện.", pct: 80, color: "bg-success" };
+    if (stars === 3) return { label: "Có hành động rõ (3★)", desc: "Có mục tiêu và hành động cụ thể ở mức cơ bản.", pct: 60, color: "bg-[#0284c7]" };
+    if (stars === 2) return { label: "Có mục tiêu chung (2★)", desc: "Có mục tiêu chung chung nhưng thiếu hạn mức thời gian và hành động cụ thể.", pct: 40, color: "bg-warning" };
+    return { label: "Cam kết chung chung (1★)", desc: "Cam kết còn chung chung, chưa có kế hoạch cụ thể nào.", pct: 20, color: "bg-error" };
   };
 
   const q13Info = getRatingInfo("q13", q13);
@@ -446,12 +452,26 @@ export default function CoachPage() {
     fetchSubmissions();
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "coach123") {
-      setIsAuthenticated(true);
-      setLoginError(false);
-    } else {
+    try {
+      const res = await fetch("/api/coach/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      if (res.ok) {
+        setIsAuthenticated(true);
+        setLoginError(false);
+      } else {
+        setLoginError(true);
+        setTimeout(() => setLoginError(false), 3000);
+      }
+    } catch (err) {
+      console.error("Lỗi xác thực:", err);
       setLoginError(true);
       setTimeout(() => setLoginError(false), 3000);
     }
@@ -488,9 +508,11 @@ export default function CoachPage() {
 
   const getStarHint = (target: "q13" | "q14" | "q15") => {
     const val = ratings[target];
-    if (val === 1) return { text: "★ - Cần cải thiện", color: "bg-error/10 text-error" };
-    if (val === 2) return { text: "★★ - Đạt yêu cầu", color: "bg-secondary/10 text-secondary" };
-    if (val === 3) return { text: "★★★ - Xuất sắc", color: "bg-success/10 text-success" };
+    if (val === 1) return { text: "★ - Cần cải thiện nhiều", color: "bg-error/10 text-error" };
+    if (val === 2) return { text: "★★ - Cần nỗ lực thêm", color: "bg-warning/10 text-warning" };
+    if (val === 3) return { text: "★★★ - Đạt yêu cầu", color: "bg-secondary/10 text-secondary" };
+    if (val === 4) return { text: "★★★★ - Tốt / Khá", color: "bg-success/10 text-success" };
+    if (val === 5) return { text: "★★★★★ - Xuất sắc", color: "bg-success/10 text-success" };
     return { text: "Chọn sao...", color: "bg-surface-container-low text-primary" };
   };
 
@@ -942,7 +964,7 @@ export default function CoachPage() {
                         </span>
                       </div>
                       <div className="flex gap-2">
-                        {[1, 2, 3].map((num) => (
+                        {[1, 2, 3, 4, 5].map((num) => (
                           <button
                             key={num}
                             type="button"
@@ -957,7 +979,7 @@ export default function CoachPage() {
                         ))}
                       </div>
                       <div className="text-xs text-on-surface-variant">
-                        Hướng dẫn: 1★ (Ít học hỏi/Áp dụng thấp) | 2★ (Đã ứng dụng/Có thay đổi vừa) | 3★ (Chuyển biến tư duy sâu sắc/Tác động lớn)
+                        Hướng dẫn: 1★ (Mới nhận biết) | 2★ (Hiểu & định áp dụng) | 3★ (Bước đầu áp dụng) | 4★ (Áp dụng thường xuyên) | 5★ (Tác động sâu sắc)
                       </div>
                     </div>
  
@@ -970,7 +992,7 @@ export default function CoachPage() {
                         </span>
                       </div>
                       <div className="flex gap-2">
-                        {[1, 2, 3].map((num) => (
+                        {[1, 2, 3, 4, 5].map((num) => (
                           <button
                             key={num}
                             type="button"
@@ -985,7 +1007,7 @@ export default function CoachPage() {
                         ))}
                       </div>
                       <div className="text-xs text-on-surface-variant">
-                        Hướng dẫn: 1★ (Mơ hồ/Thiếu định hướng) | 2★ (Có ưu tiên rõ/Sẵn sàng vừa) | 3★ (Định hướng cực kỳ rõ ràng/Chủ động cao)
+                        Hướng dẫn: 1★ (Mơ hồ/Chưa rõ) | 2★ (Định hình sơ bộ) | 3★ (Có ưu tiên rõ) | 4★ (Sẵn sàng cao) | 5★ (Chủ động/Xác định cực kỳ rõ ràng)
                       </div>
                     </div>
  
@@ -998,7 +1020,7 @@ export default function CoachPage() {
                         </span>
                       </div>
                       <div className="flex gap-2">
-                        {[1, 2, 3].map((num) => (
+                        {[1, 2, 3, 4, 5].map((num) => (
                           <button
                             key={num}
                             type="button"
@@ -1013,7 +1035,7 @@ export default function CoachPage() {
                         ))}
                       </div>
                       <div className="text-xs text-on-surface-variant">
-                        Hướng dẫn: 1★ (Cam kết chung chung/Hành động yếu) | 2★ (Có hành động & hạn mức/Khá cam kết) | 3★ (Cam kết mạnh mẽ/Đo lường rõ)
+                        Hướng dẫn: 1★ (Cam kết yếu/Chung chung) | 2★ (Có mục tiêu chung) | 3★ (Hành động & hạn mức cụ thể) | 4★ (Cam kết mạnh mẽ) | 5★ (Đo lường rõ ràng/Chủ động hành động)
                       </div>
                     </div>
  

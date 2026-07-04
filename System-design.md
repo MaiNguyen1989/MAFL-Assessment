@@ -64,7 +64,7 @@
 - **Chấm điểm & Nhận xét:** 
   - Xem biểu đồ mạng nhện sơ bộ được tính toán tự động từ 12 câu trắc nghiệm.
   - Xem chi tiết câu trả lời Q13, Q14, Q15.
-  - Chấm điểm sao nhanh (1★, 2★, 3★) cho từng câu tự luận dựa trên tiêu chí hướng dẫn (Phản hồi học tập, Mức độ sẵn sàng, Mức độ cam kết).
+  - Chấm điểm sao nhanh (1★ - 5★) cho từng câu tự luận dựa trên tiêu chí hướng dẫn (Phản hồi học tập, Mức độ sẵn sàng, Mức độ cam kết).
   - Nhập ô nhận xét/khuyên nhủ tự do cho học viên.
 - **Xuất bản kết quả:** Bấm "Hoàn thành & Gửi báo cáo" để hệ thống tự động khóa bài, kết xuất PDF và gửi email.
 
@@ -111,7 +111,7 @@
 
 1. **`users`**: Quản lý thông tin đăng nhập và phân quyền (chủ yếu dành cho Coach).
 2. **`assessments`**: Lưu trữ toàn bộ bài làm khảo sát của học viên (bao gồm thông tin cá nhân, câu trả lời trắc nghiệm dạng JSONB và câu trả lời tự luận).
-3. **`coach_reviews`**: Lưu trữ kết quả chấm điểm sao (1-3★) và nhận xét chi tiết của Coach cho từng bài đánh giá.
+3. **`coach_reviews`**: Lưu trữ kết quả chấm điểm sao (1-5★) và nhận xét chi tiết của Coach cho từng bài đánh giá.
 
 ---
 
@@ -186,7 +186,9 @@
   - **S** (Hệ thống): Tính từ các câu hỏi quy định.
 
 ### Tiêu chí chấm điểm tự luận (Q13 - Q15) dành cho Coach
-- **Mức 1 sao (★):** Cần cải thiện.
-- **Mức 2 sao (★★):** Đạt yêu cầu.
-- **Mức 3 sao (★★★):** Xuất sắc.
+- **Mức 1 sao (★):** Cần cải thiện nhiều.
+- **Mức 2 sao (★★):** Cần nỗ lực thêm.
+- **Mức 3 sao (★★★):** Đạt yêu cầu.
+- **Mức 4 sao (★★★★):** Tốt / Khá.
+- **Mức 5 sao (★★★★★):** Xuất sắc.
 - Đánh giá dựa trên 3 trụ cột: Phản hồi học tập, Mức độ sẵn sàng, Mức độ cam kết.

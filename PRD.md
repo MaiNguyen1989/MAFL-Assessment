@@ -48,7 +48,7 @@ Một ứng dụng trên trang web giúp tự động hóa toàn bộ quy trình
    - Biểu đồ mạng nhện sơ bộ từ câu 1-12.
    - Nội dung trả lời chi tiết câu 13, 14, 15 của học viên.
 5. Người thầy thực hiện:
-   - Chọn mức sao (★, ★★, ★★★) cho các câu 13, 14, 15 dựa trên bảng hướng dẫn có sẵn trên màn hình.
+    - Chọn mức sao (từ 1 đến 5 sao) cho các câu 13, 14, 15 dựa trên bảng hướng dẫn có sẵn trên màn hình.
    - Gõ lời khuyên/nhận xét chung cho học viên vào ô văn bản.
 6. Người thầy bấm "Hoàn thành & Gửi báo cáo".
 7. Hệ thống tự động tạo file PDF và gửi vào email của cả học viên và người thầy.
@@ -65,7 +65,7 @@ Một ứng dụng trên trang web giúp tự động hóa toàn bộ quy trình
 
 #### Tính năng dành cho Người thầy (Coach)
 - **Trang quản lý danh sách:** Nơi hiển thị tên tất cả học viên đã làm bài, ngày làm bài và trạng thái chấm điểm.
-- **Trang chấm điểm tự luận:** Hiển thị câu trả lời của học viên đối với câu 13, 14, 15. Có các nút bấm chọn nhanh mức 1 sao, 2 sao hoặc 3 sao tương ứng với các tiêu chí (Phản hồi học tập, Mức độ sẵn sàng, Mức độ cam kết).
+- **Trang chấm điểm tự luận:** Hiển thị câu trả lời của học viên đối với câu 13, 14, 15. Có các nút bấm chọn nhanh mức từ 1 sao đến 5 sao tương ứng với các tiêu chí (Phản hồi học tập, Mức độ sẵn sàng, Mức độ cam kết).
 - **Ô gõ nhận xét tự do:** Cho phép người thầy viết lời nhắn nhủ riêng cho học viên.
 - **Nút bấm gửi kết quả:** Bấm để hệ thống tự khóa bài và gửi email PDF cho cả hai bên.
 

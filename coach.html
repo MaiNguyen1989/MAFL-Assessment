@@ -672,10 +672,12 @@
                       <span class="star" onclick="setStars('q13', 1)">★</span>
                       <span class="star" onclick="setStars('q13', 2)">★</span>
                       <span class="star" onclick="setStars('q13', 3)">★</span>
+                      <span class="star" onclick="setStars('q13', 4)">★</span>
+                      <span class="star" onclick="setStars('q13', 5)">★</span>
                     </div>
                   </div>
                   <div style="font-size: 11px; color: var(--color-on-surface-variant); line-height: 1.4;">
-                    Hướng dẫn: 1★ (Ít học hỏi/Áp dụng thấp) | 2★ (Đã ứng dụng/Có thay đổi vừa) | 3★ (Chuyển biến tư duy sâu sắc/Tác động lớn)
+                    Hướng dẫn: 1★ (Mới nhận biết) | 2★ (Hiểu & định áp dụng) | 3★ (Bước đầu áp dụng) | 4★ (Áp dụng thường xuyên) | 5★ (Tác động sâu sắc)
                   </div>
                 </div>
 
@@ -690,10 +692,12 @@
                       <span class="star" onclick="setStars('q14', 1)">★</span>
                       <span class="star" onclick="setStars('q14', 2)">★</span>
                       <span class="star" onclick="setStars('q14', 3)">★</span>
+                      <span class="star" onclick="setStars('q14', 4)">★</span>
+                      <span class="star" onclick="setStars('q14', 5)">★</span>
                     </div>
                   </div>
                   <div style="font-size: 11px; color: var(--color-on-surface-variant); line-height: 1.4;">
-                    Hướng dẫn: 1★ (Mơ hồ/Thiếu định hướng) | 2★ (Có ưu tiên rõ/Sẵn sàng vừa) | 3★ (Định hướng cực kỳ rõ ràng/Chủ động cao)
+                    Hướng dẫn: 1★ (Mơ hồ/Chưa rõ) | 2★ (Định hình sơ bộ) | 3★ (Có ưu tiên rõ) | 4★ (Sẵn sàng cao) | 5★ (Chủ động/Xác định cực kỳ rõ ràng)
                   </div>
                 </div>
 
@@ -708,10 +712,12 @@
                       <span class="star" onclick="setStars('q15', 1)">★</span>
                       <span class="star" onclick="setStars('q15', 2)">★</span>
                       <span class="star" onclick="setStars('q15', 3)">★</span>
+                      <span class="star" onclick="setStars('q15', 4)">★</span>
+                      <span class="star" onclick="setStars('q15', 5)">★</span>
                     </div>
                   </div>
                   <div style="font-size: 11px; color: var(--color-on-surface-variant); line-height: 1.4;">
-                    Hướng dẫn: 1★ (Cam kết chung chung/Hành động yếu) | 2★ (Có hành động & hạn mức/Khá cam kết) | 3★ (Cam kết mạnh mẽ/Đo lường rõ)
+                    Hướng dẫn: 1★ (Cam kết yếu/Chung chung) | 2★ (Có mục tiêu chung) | 3★ (Hành động & hạn mức cụ thể) | 4★ (Cam kết mạnh mẽ) | 5★ (Đo lường rõ ràng/Chủ động hành động)
                   </div>
                 </div>
 
@@ -979,16 +985,24 @@
       // Update tooltip hints
       const hint = document.getElementById(`hint-${target}`);
       if (count === 1) {
-        hint.innerText = "★ - Cần cải thiện";
+        hint.innerText = "★ - Cần cải thiện nhiều";
         hint.style.backgroundColor = "rgba(186, 26, 26, 0.1)";
         hint.style.color = "var(--color-error)";
       } else if (count === 2) {
-        hint.innerText = "★★ - Đạt yêu cầu";
+        hint.innerText = "★★ - Cần nỗ lực thêm";
+        hint.style.backgroundColor = "rgba(230, 162, 44, 0.1)";
+        hint.style.color = "var(--color-warning)";
+      } else if (count === 3) {
+        hint.innerText = "★★★ - Đạt yêu cầu";
         hint.style.backgroundColor = "rgba(82, 95, 113, 0.1)";
         hint.style.color = "var(--color-secondary)";
-      } else if (count === 3) {
-        hint.innerText = "★★★ - Xuất sắc";
+      } else if (count === 4) {
+        hint.innerText = "★★★★ - Tốt / Khá";
         hint.style.backgroundColor = "rgba(26, 135, 84, 0.1)";
+        hint.style.color = "var(--color-success)";
+      } else if (count === 5) {
+        hint.innerText = "★★★★★ - Xuất sắc";
+        hint.style.backgroundColor = "rgba(26, 135, 84, 0.15)";
         hint.style.color = "var(--color-success)";
       } else {
         hint.innerText = "Chọn sao...";

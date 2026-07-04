@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS public.coach_reviews (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     assessment_id UUID NOT NULL UNIQUE REFERENCES public.assessments(id) ON DELETE CASCADE,
     coach_id UUID DEFAULT auth.uid(),
-    q13_stars INT NOT NULL CHECK (q13_stars BETWEEN 1 AND 3),
-    q14_stars INT NOT NULL CHECK (q14_stars BETWEEN 1 AND 3),
-    q15_stars INT NOT NULL CHECK (q15_stars BETWEEN 1 AND 3),
+    q13_stars INT NOT NULL CHECK (q13_stars BETWEEN 1 AND 5),
+    q14_stars INT NOT NULL CHECK (q14_stars BETWEEN 1 AND 5),
+    q15_stars INT NOT NULL CHECK (q15_stars BETWEEN 1 AND 5),
     feedback TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
